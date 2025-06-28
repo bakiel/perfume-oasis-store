@@ -21,10 +21,10 @@ export default async function HomePage() {
   }
   
   products?.forEach(product => {
-    const gender = product.gender?.toLowerCase()
-    if (gender === 'women' || gender === 'female') categoryCounts.women++
-    else if (gender === 'men' || gender === 'male') categoryCounts.men++
-    else if (gender === 'unisex') categoryCounts.unisex++
+    const gender = product.gender
+    if (gender === 'Women') categoryCounts.women++
+    else if (gender === 'Men') categoryCounts.men++
+    else if (gender === 'Unisex') categoryCounts.unisex++
   })
   
   // Get featured products

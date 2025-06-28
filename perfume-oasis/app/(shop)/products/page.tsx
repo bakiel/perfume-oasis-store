@@ -68,8 +68,15 @@ export default async function ProductsPage({
     }
   }
   
+  // Handle gender filtering with proper capitalization
   if (searchParams.gender) {
-    query = query.ilike('gender', searchParams.gender)
+    if (searchParams.gender === 'women') {
+      query = query.eq('gender', 'Women')
+    } else if (searchParams.gender === 'men') {
+      query = query.eq('gender', 'Men')
+    } else if (searchParams.gender === 'unisex') {
+      query = query.eq('gender', 'Unisex')
+    }
   }
   
   if (searchParams.minPrice) {
@@ -163,10 +170,10 @@ export default async function ProductsPage({
     .not('gender', 'is', null)
   
   genderData?.forEach(product => {
-    const gender = product.gender?.toLowerCase()
-    if (gender === 'women' || gender === 'female') genderCounts.women++
-    else if (gender === 'men' || gender === 'male') genderCounts.men++
-    else if (gender === 'unisex') genderCounts.unisex++
+    const gender = product.gender
+    if (gender === 'Women') genderCounts.women++
+    else if (gender === 'Men') genderCounts.men++
+    else if (gender === 'Unisex') genderCounts.unisex++
   })
   
   return (
