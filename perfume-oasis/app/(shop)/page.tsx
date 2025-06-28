@@ -42,6 +42,24 @@ export default async function HomePage() {
     .eq('is_featured', true)
     .limit(4)
   
+  // Get products on sale (with compare_at_price)
+  const { data: saleProducts } = await supabase
+    .from('products')
+    .select(`
+      id,
+      name,
+      slug,
+      price,
+      compare_at_price,
+      main_image_url,
+      brand:brands(name)
+    `)
+    .eq('is_active', true)
+    .not('compare_at_price', 'is', null)
+    .gt('compare_at_price', 0)
+    .order('created_at', { ascending: false })
+    .limit(4)
+  
   return (
     <>
       {/* Hero Section */}
@@ -93,6 +111,62 @@ export default async function HomePage() {
         
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-soft-sand to-transparent" />
       </section>
+
+      {/* Special Offers Banner */}
+      {saleProducts && saleProducts.length > 0 && (
+        <section className="py-8 bg-gold-400/10">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-emerald-palm mb-2">
+                Special Offers
+              </h2>
+              <p className="text-gray-600">Save up to 30% on selected fragrances</p>
+            </div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                  LIMITED TIME
+                </span>
+              </div>
+              <Link 
+                href="/sale" 
+                className="text-sm text-emerald-palm hover:text-emerald-palm/80 font-medium"
+              >
+                View all specials →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {saleProducts.map((product: any) => {
+                const discount = product.compare_at_price 
+                  ? Math.round(((product.compare_at_price - product.price) / product.compare_at_price) * 100)
+                  : 0
+                
+                return (
+                  <div key={product.id} className="relative">
+                    {discount > 0 && (
+                      <span className="absolute top-2 left-2 z-10 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                        -{discount}%
+                      </span>
+                    )}
+                    <ProductCard 
+                      id={product.id}
+                      name={product.name}
+                      slug={product.slug}
+                      price={product.price}
+                      originalPrice={product.compare_at_price}
+                      image={product.main_image_url || '/images/products/product-placeholder-1.jpg'}
+                      brand={Array.isArray(product.brand) 
+                        ? product.brand[0]?.name || 'Unknown Brand'
+                        : product.brand?.name || 'Unknown Brand'
+                      }
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Categories Section */}
       <section className="py-16 bg-white">

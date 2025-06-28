@@ -36,9 +36,10 @@ export function StoreHeader() {
   }
   
   const categories = [
-    { name: "Women's Fragrances", href: '/products?category=womens-fragrances' },
-    { name: "Men's Fragrances", href: '/products?category=mens-fragrances' },
-    { name: "Unisex Fragrances", href: '/products?category=unisex-fragrances' }
+    { name: "Women's Fragrances", href: '/products?gender=women' },
+    { name: "Men's Fragrances", href: '/products?gender=men' },
+    { name: "Unisex Fragrances", href: '/products?gender=unisex' },
+    { name: "All Products", href: '/products' }
   ]
 
   return (

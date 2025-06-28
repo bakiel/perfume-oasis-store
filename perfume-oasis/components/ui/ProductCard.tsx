@@ -13,11 +13,12 @@ interface ProductCardProps {
   name: string;
   brand: string;
   price: number;
+  originalPrice?: number;
   image: string;
   slug: string;
 }
 
-export function ProductCard({ id, name, brand, price, image, slug }: ProductCardProps) {
+export function ProductCard({ id, name, brand, price, originalPrice, image, slug }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem);
   return (
     <div className="group">
@@ -37,7 +38,12 @@ export function ProductCard({ id, name, brand, price, image, slug }: ProductCard
       <div className="space-y-2">
         <p className="text-sm text-[#C8A95B] font-medium">{brand}</p>
         <h3 className="font-semibold text-[#2C2C2C]">{name}</h3>
-        <p className="text-lg font-bold text-[#0E5C4A]">R {price.toFixed(2)}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-lg font-bold text-[#0E5C4A]">R {price.toFixed(2)}</p>
+          {originalPrice && originalPrice > price && (
+            <p className="text-sm text-gray-500 line-through">R {originalPrice.toFixed(2)}</p>
+          )}
+        </div>
         <Button 
           className="w-full bg-[#0E5C4A] hover:bg-[#0A4A3B] text-white flex items-center justify-center gap-2"
           onClick={(e) => {
