@@ -155,8 +155,8 @@ export function StoreHeader() {
         
         {/* Search Bar */}
         <div className={cn(
-          "absolute top-full left-0 right-0 bg-white border-b transition-all duration-300 z-40",
-          isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible"
+          "absolute top-full left-0 right-0 bg-white border-b transition-all duration-300 z-30",
+          isSearchOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         )}>
           <div className="max-w-3xl mx-auto p-4">
             <form onSubmit={handleSearch} className="flex gap-2">
