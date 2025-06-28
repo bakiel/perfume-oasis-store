@@ -1,0 +1,52 @@
+{
+  "api_key": "8282ba3d-3ed8-477a-97c1-f2df0b0788d9:63ac16ab4d6036adb13613967e8ff70d",
+  "output_dir": "~/Pictures/visual-ai-generated",
+  "models": {
+    "imagen4": {
+      "api": "fal-ai/imagen4/preview/fast",
+      "name": "ImageN4",
+      "description": "High-quality general image generation",
+      "use_cases": ["product_photos", "general_images", "photorealistic"]
+    },
+    "gpt-image": {
+      "text": {
+        "api": "fal-ai/gpt-image-1/text-to-image/byok",
+        "name": "GPT-Image Text",
+        "description": "Text-heavy posts and logos"
+      },
+      "edit": {
+        "api": "fal-ai/gpt-image-1/edit-image/byok",
+        "name": "GPT-Image Edit",
+        "description": "Edit existing images"
+      }
+    },
+    "flux-context": {
+      "api": "fal-ai/flux-pro/kontext",
+      "name": "Flux Context",
+      "description": "GPT alternative with context awareness",
+      "use_cases": ["artistic", "context_aware", "creative"]
+    },
+    "video": {
+      "hailuo": {
+        "api": "fal-ai/hailuo-ai",
+        "name": "Hailuo AI",
+        "description": "Best quality video generation"
+      },
+      "seedance": {
+        "api": "fal-ai/seedance",
+        "name": "Seedance",
+        "description": "Cost-effective video generation"
+      }
+    }
+  },
+  "brand": {
+    "perfume_oasis": {
+      "colors": {
+        "emerald": "#0E5C4A",
+        "gold": "#C8A95B",
+        "cream": "#F6F3EF"
+      },
+      "logo_path": "assets/logos/perfume-oasis.png"
+    }
+  }
+}

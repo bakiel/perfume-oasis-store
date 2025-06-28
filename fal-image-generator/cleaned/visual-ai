@@ -1,0 +1,120 @@
+#!/usr/bin/env python3
+"""
+Visual AI - Unified CLI for image and video generation
+"""
+import argparse
+import sys
+from pathlib import Path
+
+# Add the parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent))
+
+from core import ImageGenerator, VideoGenerator
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Visual AI - Generate images and videos with AI",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # High-quality image with ImageN4
+  visual-ai image "luxury perfume bottle" --model imagen4
+  
+  # Text-heavy social post
+  visual-ai image "SALE: 30% OFF" --model gpt-image --style post
+  
+  # Logo generation
+  visual-ai image "Perfume Oasis logo" --model gpt-image --style logo
+  
+  # Artistic image with context
+  visual-ai image "elegant perfume" --model flux-context --context "luxury brand"
+  
+  # Video generation
+  visual-ai video "perfume commercial" --model hailuo --duration 6
+  
+  # Video with image input
+  visual-ai video "make it sparkle" --model hailuo --image product.jpg
+        """
+    )
+    
+    subparsers = parser.add_subparsers(dest='command', help='Command to run')
+    
+    # Image generation command
+    image_parser = subparsers.add_parser('image', help='Generate images')
+    image_parser.add_argument('prompt', help='Text prompt for generation')
+    image_parser.add_argument('--model', default='imagen4', 
+                            choices=['imagen4', 'gpt-image', 'flux-context'],
+                            help='Model to use (default: imagen4)')
+    image_parser.add_argument('--size', default='1024x1024',
+                            help='Image size (default: 1024x1024)')
+    image_parser.add_argument('--style', choices=['post', 'logo'],
+                            help='Style for GPT-Image model')
+    image_parser.add_argument('--context', help='Context for Flux Context model')
+    image_parser.add_argument('--seed', type=int, help='Random seed')
+    image_parser.add_argument('--openai-key', help='OpenAI API key for GPT-Image')
+    
+    # Video generation command
+    video_parser = subparsers.add_parser('video', help='Generate videos')
+    video_parser.add_argument('prompt', help='Text prompt for generation')
+    video_parser.add_argument('--model', default='hailuo',
+                            choices=['hailuo', 'seedance'],
+                            help='Model to use (default: hailuo)')
+    video_parser.add_argument('--duration', type=int, default=6,
+                            help='Video duration in seconds')
+    video_parser.add_argument('--image', help='Input image for image-to-video')
+    video_parser.add_argument('--logo', help='Logo to overlay on video')
+    video_parser.add_argument('--seed', type=int, help='Random seed')
+    
+    args = parser.parse_args()
+    
+    if not args.command:
+        parser.print_help()
+        return
+    
+    try:
+        if args.command == 'image':
+            generator = ImageGenerator()
+            kwargs = {}
+            
+            if args.style:
+                kwargs['style'] = args.style
+            if args.context:
+                kwargs['context'] = args.context
+            if args.seed:
+                kwargs['seed'] = args.seed
+            if args.openai_key:
+                kwargs['openai_key'] = args.openai_key
+            
+            result = generator.generate(
+                args.prompt,
+                model=args.model,
+                size=args.size,
+                **kwargs
+            )
+            print(f"✨ Image generated: {result}")
+            
+        elif args.command == 'video':
+            generator = VideoGenerator()
+            kwargs = {}
+            
+            if args.image:
+                kwargs['image_path'] = args.image
+            if args.logo:
+                kwargs['logo_path'] = args.logo
+            if args.seed:
+                kwargs['seed'] = args.seed
+            
+            result = generator.generate(
+                args.prompt,
+                model=args.model,
+                duration=args.duration,
+                **kwargs
+            )
+            print(f"🎬 Video generated: {result}")
+            
+    except Exception as e:
+        print(f"❌ Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == '__main__':
+    main()

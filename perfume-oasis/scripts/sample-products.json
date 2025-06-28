@@ -1,0 +1,164 @@
+{
+  "products": [
+    {
+      "name": "Oud Royale",
+      "brand": "Arabian Nights",
+      "category": "Oriental",
+      "price": 1899,
+      "description": "A luxurious blend of authentic oud, rose, and amber. This exquisite fragrance captures the essence of Middle Eastern luxury.",
+      "notes": {
+        "top": ["Bergamot", "Saffron"],
+        "middle": ["Rose", "Oud", "Jasmine"],
+        "base": ["Amber", "Sandalwood", "Musk"]
+      },
+      "size": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unisex",
+      "image": "/images/products/oud-royale.jpg"
+    },
+    {
+      "name": "Rose Garden",
+      "brand": "Fleur de Paris",
+      "category": "Floral",
+      "price": 1499,
+      "description": "A romantic bouquet of fresh roses with a modern twist. Perfect for the sophisticated woman.",
+      "notes": {
+        "top": ["Pink Pepper", "Lemon"],
+        "middle": ["Rose", "Peony", "Lily"],
+        "base": ["White Musk", "Cedar", "Vanilla"]
+      },
+      "size": "50ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Women",
+      "image": "/images/products/rose-garden.jpg"
+    },
+    {
+      "name": "Ocean Breeze",
+      "brand": "Aqua Marine",
+      "category": "Fresh",
+      "price": 999,
+      "description": "Fresh aquatic fragrance that captures the essence of the ocean. Invigorating and refreshing.",
+      "notes": {
+        "top": ["Sea Salt", "Citrus", "Mint"],
+        "middle": ["Marine Notes", "Lavender", "Sage"],
+        "base": ["Driftwood", "Ambergris", "White Musk"]
+      },
+      "size": "100ml",
+      "concentration": "Eau de Toilette",
+      "gender": "Men",
+      "image": "/images/products/ocean-breeze.jpg"
+    },
+    {
+      "name": "Amber Dreams",
+      "brand": "Oriental Tales",
+      "category": "Oriental",
+      "price": 2199,
+      "description": "A warm, enveloping fragrance with rich amber at its heart. Perfect for evening wear.",
+      "notes": {
+        "top": ["Cinnamon", "Cardamom", "Orange"],
+        "middle": ["Amber", "Myrrh", "Frankincense"],
+        "base": ["Vanilla", "Patchouli", "Benzoin"]
+      },
+      "size": "75ml",
+      "concentration": "Parfum",
+      "gender": "Unisex",
+      "image": "/images/products/amber-dreams.jpg"
+    },
+    {
+      "name": "Vanilla Luxe",
+      "brand": "Sweet Essence",
+      "category": "Gourmand",
+      "price": 1299,
+      "description": "A delicious blend of Madagascar vanilla with subtle floral notes. Irresistibly sweet and sophisticated.",
+      "notes": {
+        "top": ["Caramel", "Almond"],
+        "middle": ["Vanilla", "Jasmine", "Orange Blossom"],
+        "base": ["Tonka Bean", "Sandalwood", "White Musk"]
+      },
+      "size": "50ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Women",
+      "image": "/images/products/vanilla-luxe.jpg"
+    },
+    {
+      "name": "Black Leather",
+      "brand": "Urban Edge",
+      "category": "Woody",
+      "price": 1599,
+      "description": "Bold and masculine with notes of leather and spices. For the confident modern man.",
+      "notes": {
+        "top": ["Black Pepper", "Lemon", "Cardamom"],
+        "middle": ["Leather", "Iris", "Violet"],
+        "base": ["Vetiver", "Cedar", "Amber"]
+      },
+      "size": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Men",
+      "image": "/images/products/black-leather.jpg"
+    },
+    {
+      "name": "Spring Blossom",
+      "brand": "Garden Collection",
+      "category": "Floral",
+      "price": 1099,
+      "description": "Light and airy floral fragrance perfect for daytime wear. Captures the essence of spring.",
+      "notes": {
+        "top": ["Green Apple", "Pear", "Freesia"],
+        "middle": ["Cherry Blossom", "Magnolia", "Rose"],
+        "base": ["White Woods", "Musk", "Amber"]
+      },
+      "size": "50ml",
+      "concentration": "Eau de Toilette",
+      "gender": "Women",
+      "image": "/images/products/spring-blossom.jpg"
+    },
+    {
+      "name": "Midnight Oud",
+      "brand": "Arabian Nights",
+      "category": "Oriental",
+      "price": 2499,
+      "description": "An intense and mysterious oud fragrance for special occasions. Rich and long-lasting.",
+      "notes": {
+        "top": ["Saffron", "Nutmeg", "Lavender"],
+        "middle": ["Agarwood", "Rose", "Geranium"],
+        "base": ["Leather", "Amber", "Sandalwood"]
+      },
+      "size": "50ml",
+      "concentration": "Parfum",
+      "gender": "Unisex",
+      "image": "/images/products/midnight-oud.jpg"
+    },
+    {
+      "name": "Citrus Burst",
+      "brand": "Fresh Start",
+      "category": "Citrus",
+      "price": 799,
+      "description": "Energizing citrus blend perfect for summer days. Fresh and uplifting.",
+      "notes": {
+        "top": ["Lemon", "Bergamot", "Grapefruit"],
+        "middle": ["Orange Blossom", "Neroli", "Petitgrain"],
+        "base": ["White Musk", "Cedar", "Amber"]
+      },
+      "size": "100ml",
+      "concentration": "Eau de Cologne",
+      "gender": "Unisex",
+      "image": "/images/products/citrus-burst.jpg"
+    },
+    {
+      "name": "Royal Jasmine",
+      "brand": "Fleur de Paris",
+      "category": "Floral",
+      "price": 1799,
+      "description": "Opulent jasmine fragrance fit for royalty. Elegant and timeless.",
+      "notes": {
+        "top": ["Bergamot", "Mandarin"],
+        "middle": ["Jasmine", "Ylang-Ylang", "Tuberose"],
+        "base": ["Sandalwood", "Vanilla", "Musk"]
+      },
+      "size": "75ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Women",
+      "image": "/images/products/royal-jasmine.jpg"
+    }
+  ]
+}

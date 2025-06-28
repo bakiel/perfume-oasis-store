@@ -1,0 +1,13 @@
+{
+  "name": "PROJECT_NAME",
+  "brand_colors": {
+    "primary": "#000000",
+    "secondary": "#FFFFFF"
+  },
+  "assets_dir": "assets",
+  "output_formats": {
+    "social": "1080x1080",
+    "hero": "1920x600",
+    "product": "1920x1080"
+  }
+}

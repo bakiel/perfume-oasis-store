@@ -1,0 +1,79 @@
+{
+  "api_key": "8282ba3d-3ed8-477a-97c1-f2df0b0788d9:63ac16ab4d6036adb13613967e8ff70d",
+  "output_dir": "~/Pictures/fal-ai-generated",
+  "default_quality": 60,
+  "default_model": "imagen4",
+  "context_models": {
+    "primary": "imagen4",
+    "secondary": "gpt-image-style",
+    "alternative": "flux-redux"
+  },
+  "model_configs": {
+    "imagen4": {
+      "api": "fal-ai/imagen4/preview/fast",
+      "name": "Imagen 4 (GPT Image Model)",
+      "type": "text-to-image",
+      "description": "Google's Imagen 4 - Advanced text-to-image generation"
+    },
+    "gpt-image-1-text": {
+      "api": "fal-ai/gpt-image-1/text-to-image/byok",
+      "name": "GPT-Image-1 Text-to-Image",
+      "type": "text-to-image",
+      "description": "OpenAI GPT-Image-1 for text-to-image generation (BYOK)"
+    },
+    "gpt-image-1-edit": {
+      "api": "fal-ai/gpt-image-1/edit-image/byok",
+      "name": "GPT-Image-1 Edit Image",
+      "type": "image-editing",
+      "description": "OpenAI GPT-Image-1 for image editing (BYOK)"
+    },
+    "flux-kontext": {
+      "api": "fal-ai/flux-pro/kontext",
+      "name": "FLUX.1 Kontext Pro",
+      "type": "context-aware",
+      "description": "GPT-like context understanding for image editing"
+    },
+    "flux-kontext-max": {
+      "api": "fal-ai/flux-kontext/max",
+      "name": "FLUX.1 Kontext Max",
+      "type": "context-aware-premium",
+      "description": "Premium context-aware with enhanced typography"
+    },
+    "gpt-image-style": {
+      "api": "fal-ai/flux-general/image-to-image",
+      "name": "GPT-Image Style (via Image-to-Image)",
+      "type": "transformation",
+      "description": "GPT-Image-1 style transformations"
+    },
+    "flux-redux": {
+      "api": "fal-ai/flux/redux",
+      "name": "FLUX.1 Redux",
+      "type": "variation",
+      "description": "Image variation generator"
+    },
+    "flux-schnell": {
+      "api": "fal-ai/flux-schnell",
+      "name": "FLUX Schnell",
+      "type": "fast-generation",
+      "description": "Fast text-to-image generation"
+    },
+    "flux-pro": {
+      "api": "fal-ai/flux-pro",
+      "name": "FLUX Pro",
+      "type": "high-quality",
+      "description": "High-quality text-to-image generation"
+    }
+  },
+  "brand_config": {
+    "colors": {
+      "primary": "#0E5C4A",
+      "secondary": "#C8A95B",
+      "primary_name": "emerald",
+      "secondary_name": "gold"
+    },
+    "logos": {
+      "main": "projects/perfume-oasis/assets/po-logo.png",
+      "square": "projects/perfume-oasis/assets/po-square-logo.jpg"
+    }
+  }
+}

@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Italiana&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --safe-area-inset-top: env(safe-area-inset-top);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-soft-sand text-deep-charcoal;
+    font-family: 'Inter', sans-serif;
+    overscroll-behavior-y: none;
+    padding-top: var(--safe-area-inset-top);
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-soft-sand;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-emerald-palm/30 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-emerald-palm/50;
+  }
+}
+
+@layer components {
+  /* Mobile-first utilities */
+  .safe-top {
+    padding-top: var(--safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: var(--safe-area-inset-bottom);
+  }
+
+  .tap-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+
+  /* Typography */
+  .heading-display {
+    @apply font-display font-bold text-emerald-palm;
+  }
+
+  .text-accent {
+    @apply font-accent text-royal-gold;
+  }
+
+  /* Animations */
+  .shimmer {
+    @apply relative overflow-hidden;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(200, 169, 91, 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+
+  /* Glass effect */
+  .glass {
+    @apply backdrop-blur-md bg-white/70 border border-white/20;
+  }
+
+  /* Product card hover */
+  .product-hover {
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply bg-emerald-palm text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-emerald-palm/90 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-emerald-palm border border-emerald-palm px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-emerald-palm/5 active:scale-95;
+  }
+
+  .btn-gold {
+    @apply bg-royal-gold text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-royal-gold/90 active:scale-95;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

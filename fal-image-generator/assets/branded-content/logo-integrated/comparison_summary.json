@@ -1,0 +1,76 @@
+{
+  "test_name": "Perfume Oasis Logo Brand Comparison",
+  "timestamp": "2025-06-26T13:24:50.711264",
+  "logo_used": "/Users/mac/Downloads/PERFUME-OASIS-AUTOMATION-HUB/perfume-oasis/public/images/logos/perfume-oasis-main-logo.png",
+  "brand_colors": {
+    "emerald": "#0E5C4A",
+    "gold": "#C8A95B",
+    "sand": "#F6F3EF",
+    "charcoal": "#2C2C2C"
+  },
+  "results": {
+    "gpt_approach": {
+      "method": "Single-step with branding in prompt",
+      "generated": 3,
+      "files": [
+        {
+          "filepath": "/Users/mac/Pictures/fal-ai-generated/perfume-oasis-logo-comparison/logo_comparison_20250626_132134/gpt_approach/gpt_01_signature_product.jpg",
+          "method": "GPT-prompt-based"
+        },
+        {
+          "filepath": "/Users/mac/Pictures/fal-ai-generated/perfume-oasis-logo-comparison/logo_comparison_20250626_132134/gpt_approach/gpt_02_artisan_heritage.jpg",
+          "method": "GPT-prompt-based"
+        },
+        {
+          "filepath": "/Users/mac/Pictures/fal-ai-generated/perfume-oasis-logo-comparison/logo_comparison_20250626_132134/gpt_approach/gpt_03_modern_campaign.jpg",
+          "method": "GPT-prompt-based"
+        }
+      ]
+    },
+    "kontext_approach": {
+      "method": "Two-step base generation + brand application",
+      "generated": 3,
+      "files": [
+        {
+          "filepath": "/Users/mac/Pictures/fal-ai-generated/perfume-oasis-logo-comparison/logo_comparison_20250626_132134/kontext_approach/kontext_01_signature_product.jpg",
+          "method": "Kontext-two-step"
+        },
+        {
+          "filepath": "/Users/mac/Pictures/fal-ai-generated/perfume-oasis-logo-comparison/logo_comparison_20250626_132134/kontext_approach/kontext_02_artisan_heritage.jpg",
+          "method": "Kontext-two-step"
+        },
+        {
+          "filepath": "/Users/mac/Pictures/fal-ai-generated/perfume-oasis-logo-comparison/logo_comparison_20250626_132134/kontext_approach/kontext_03_modern_campaign.jpg",
+          "method": "Kontext-two-step"
+        }
+      ]
+    }
+  },
+  "posts": [
+    {
+      "id": 1,
+      "title": "Signature Product",
+      "base_prompt": "Luxury perfume product photography: Emerald green glass perfume bottle with gold cap on white marble surface, soft diffused studio lighting, minimalist composition, negative space in upper third for text, professional commercial photography, 1:1 square format, ultra high quality",
+      "kontext_prompt": "Add the Perfume Oasis logo as a subtle watermark in the bottom right corner at 25% opacity, ensure bottle color is exactly emerald green #0E5C4A, add subtle gold #C8A95B reflection on cap, maintain minimalist luxury aesthetic",
+      "gpt_branded_prompt": "Luxury perfume product photography: Emerald green #0E5C4A glass perfume bottle with gold #C8A95B cap on white marble, Perfume Oasis branding visible as subtle watermark, soft studio lighting, minimalist composition with space for text, professional commercial photography, 1:1 square format",
+      "branding_intent": "Subtle logo watermark, exact brand colors, Instagram-ready"
+    },
+    {
+      "id": 2,
+      "title": "Artisan Heritage",
+      "base_prompt": "Elegant perfume flat lay: Crystal perfume bottle surrounded by fresh white jasmine flowers, vintage gold perfumer tools, on textured cream linen background, overhead shot, warm natural lighting, artisanal luxury aesthetic, 1:1 square format",
+      "kontext_prompt": "Place the Perfume Oasis logo embossed on the perfume bottle cap in gold, transform background to exact sand color #F6F3EF, ensure gold tools match brand gold #C8A95B, create cohesive heritage brand story",
+      "gpt_branded_prompt": "Artisan perfume flat lay: Crystal bottle with embossed Perfume Oasis logo on cap, surrounded by jasmine flowers and gold #C8A95B perfumer tools on sand #F6F3EF linen background, overhead shot, heritage luxury branding, warm lighting, 1:1 square format",
+      "branding_intent": "Logo embossed on product, full brand palette, heritage storytelling"
+    },
+    {
+      "id": 3,
+      "title": "Modern Campaign",
+      "base_prompt": "Contemporary luxury perfume scene: Sleek perfume bottle on modern minimalist vanity, soft morning light through sheer curtains, clean aesthetic with geometric gold accents, lifestyle photography, bright and airy, 1:1 square format",
+      "kontext_prompt": "Integrate the Perfume Oasis logo as a subtle reflection on the vanity surface, transform bottle to emerald #0E5C4A, add gold #C8A95B geometric accents, ensure modern yet luxurious brand presence",
+      "gpt_branded_prompt": "Modern luxury perfume lifestyle: Emerald #0E5C4A Perfume Oasis bottle on minimalist vanity with brand logo reflection, gold #C8A95B geometric accents, soft morning light, contemporary luxury aesthetic, clean composition, 1:1 square format",
+      "branding_intent": "Environmental logo integration, modern luxury, lifestyle branding"
+    }
+  ],
+  "output_directory": "/Users/mac/Pictures/fal-ai-generated/perfume-oasis-logo-comparison/logo_comparison_20250626_132134"
+}
