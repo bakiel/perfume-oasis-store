@@ -130,6 +130,9 @@ export default async function ProductsPage({
     })
   )
   
+  // Filter out categories with no products
+  const activeCategories = categoriesWithCounts.filter(cat => cat.count > 0)
+  
   // Get product counts for brands
   const brandsWithCounts = await Promise.all(
     (brands || []).map(async (brand) => {
@@ -143,14 +146,38 @@ export default async function ProductsPage({
     })
   )
   
+  // Filter out brands with no products
+  const activeBrands = brandsWithCounts.filter(brand => brand.count > 0)
+  
+  // Get gender counts
+  const genderCounts = {
+    women: 0,
+    men: 0,
+    unisex: 0
+  }
+  
+  const { data: genderData } = await supabase
+    .from('products')
+    .select('gender')
+    .eq('is_active', true)
+    .not('gender', 'is', null)
+  
+  genderData?.forEach(product => {
+    const gender = product.gender?.toLowerCase()
+    if (gender === 'women' || gender === 'female') genderCounts.women++
+    else if (gender === 'men' || gender === 'male') genderCounts.men++
+    else if (gender === 'unisex') genderCounts.unisex++
+  })
+  
   return (
     <div className="min-h-screen bg-[#F6F3EF]">
       <Suspense fallback={<ProductsLoading />}>
         <ProductsClient
           initialProducts={transformedProducts}
-          categories={categoriesWithCounts}
-          brands={brandsWithCounts}
+          categories={activeCategories}
+          brands={activeBrands}
           searchParams={searchParams}
+          genderCounts={genderCounts}
         />
       </Suspense>
     </div>

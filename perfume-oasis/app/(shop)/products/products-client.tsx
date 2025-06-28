@@ -32,6 +32,11 @@ interface ProductsClientProps {
   categories: { name: string; slug: string; count?: number }[]
   brands: { name: string; count?: number }[]
   searchParams: any
+  genderCounts?: {
+    women: number
+    men: number
+    unisex: number
+  }
 }
 
 const categoryImages: Record<string, string | null> = {
@@ -46,7 +51,8 @@ export function ProductsClient({
   initialProducts, 
   categories, 
   brands,
-  searchParams 
+  searchParams,
+  genderCounts 
 }: ProductsClientProps) {
   const router = useRouter()
   const urlSearchParams = useSearchParams()
@@ -274,24 +280,39 @@ export function ProductsClient({
                           All
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="women" id="gender-women" />
-                        <Label htmlFor="gender-women" className="font-normal cursor-pointer">
-                          Women
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="men" id="gender-men" />
-                        <Label htmlFor="gender-men" className="font-normal cursor-pointer">
-                          Men
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="unisex" id="gender-unisex" />
-                        <Label htmlFor="gender-unisex" className="font-normal cursor-pointer">
-                          Unisex
-                        </Label>
-                      </div>
+                      {genderCounts?.women > 0 && (
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="women" id="gender-women" />
+                          <Label htmlFor="gender-women" className="font-normal cursor-pointer">
+                            <span className="flex items-center justify-between w-full">
+                              <span>Women</span>
+                              <span className="text-xs text-gray-500">({genderCounts.women})</span>
+                            </span>
+                          </Label>
+                        </div>
+                      )}
+                      {genderCounts?.men > 0 && (
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="men" id="gender-men" />
+                          <Label htmlFor="gender-men" className="font-normal cursor-pointer">
+                            <span className="flex items-center justify-between w-full">
+                              <span>Men</span>
+                              <span className="text-xs text-gray-500">({genderCounts.men})</span>
+                            </span>
+                          </Label>
+                        </div>
+                      )}
+                      {genderCounts?.unisex > 0 && (
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="unisex" id="gender-unisex" />
+                          <Label htmlFor="gender-unisex" className="font-normal cursor-pointer">
+                            <span className="flex items-center justify-between w-full">
+                              <span>Unisex</span>
+                              <span className="text-xs text-gray-500">({genderCounts.unisex})</span>
+                            </span>
+                          </Label>
+                        </div>
+                      )}
                     </RadioGroup>
                   </div>
                   
@@ -364,7 +385,7 @@ export function ProductsClient({
               ))}
               {searchParams.gender && (
                 <Badge variant="secondary" className="gap-1">
-                  {searchParams.gender}
+                  {searchParams.gender.charAt(0).toUpperCase() + searchParams.gender.slice(1)}
                   <X 
                     className="h-3 w-3 cursor-pointer" 
                     onClick={() => updateURL({ gender: undefined })}
@@ -393,10 +414,22 @@ export function ProductsClient({
         
         {initialProducts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">No products found matching your criteria</p>
-            <Button variant="outline" onClick={clearFilters}>
-              Clear Filters
-            </Button>
+            <p className="text-gray-500 mb-4">
+              {searchParams.gender ? 
+                `No ${searchParams.gender}'s fragrances found` : 
+                'No products found matching your criteria'
+              }
+            </p>
+            {hasActiveFilters && (
+              <>
+                <p className="text-sm text-gray-400 mb-6">
+                  Try adjusting your filters or browse all products
+                </p>
+                <Button variant="outline" onClick={clearFilters}>
+                  Clear Filters
+                </Button>
+              </>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
