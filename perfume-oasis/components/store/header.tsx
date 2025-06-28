@@ -84,7 +84,7 @@ export function StoreHeader() {
                   Shop
                   <ChevronDown className="h-4 w-4" />
                 </Link>
-                <div className="absolute top-full left-0 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <div className="absolute top-full left-0 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[60]">
                   {categories.map((category) => (
                     <Link
                       key={category.href}
