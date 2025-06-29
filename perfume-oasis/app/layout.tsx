@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { StoreHeader } from "@/components/store/header";
-import { Footer } from "@/components/shop/footer";
+import { StoreFooter } from "@/components/store/footer";
 import { BottomNav } from "@/components/mobile/bottom-nav";
 import { MobileStoryAd } from "@/components/shop/mobile-story-ad";
 
@@ -86,7 +86,7 @@ export default function RootLayout({
         <main className="flex-1">
           {children}
         </main>
-        <Footer />
+        <StoreFooter />
         <div className="h-20 lg:hidden" /> {/* Spacer for bottom nav on mobile only */}
         <BottomNav />
         <MobileStoryAd />
