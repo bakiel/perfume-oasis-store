@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Heart, ShoppingBag } from "lucide-react"
@@ -22,22 +23,67 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const addItem = useCartStore((state) => state.addItem)
+  const { addItem } = useCartStore()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     
-    addItem({
-      id: product.id,
-      name: product.name,
-      brand: product.brand,
-      price: product.price,
-      image: product.image,
-      size: product.size,
-    })
+    if (!mounted) return
     
-    toast.success(`${product.name} added to cart`)
+    console.log('Adding to cart:', product)
+    
+    try {
+      addItem({
+        id: product.id,
+        name: product.name,
+        brand: product.brand,
+        price: product.price,
+        image: product.image,
+        size: product.size,
+      })
+      
+      toast.success(`${product.name} added to cart`)
+    } catch (error) {
+      console.error('Error adding to cart:', error)
+      toast.error('Failed to add item to cart')
+    }
+  }
+
+  const handleAddToWishlist = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    if (!mounted) return
+    
+    try {
+      const wishlistItems = JSON.parse(localStorage.getItem('wishlist') || '[]')
+      const exists = wishlistItems.some((item: any) => item.id === product.id)
+      
+      if (!exists) {
+        wishlistItems.push({
+          id: product.id,
+          name: product.name,
+          brand: product.brand,
+          price: product.price,
+          image_url: product.image,
+          size: product.size
+        })
+        localStorage.setItem('wishlist', JSON.stringify(wishlistItems))
+        window.dispatchEvent(new CustomEvent('wishlistChange'))
+        toast.success("Added to wishlist")
+      } else {
+        toast.error("Already in wishlist")
+      }
+    } catch (error) {
+      console.error('Error adding to wishlist:', error)
+      toast.error('Failed to add to wishlist')
+    }
   }
 
   const discount = product.originalPrice && product.originalPrice > product.price
@@ -61,11 +107,8 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
           <button 
             className="absolute top-2 right-2 p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              toast.success("Added to wishlist")
-            }}
+            onClick={handleAddToWishlist}
+            disabled={!mounted}
           >
             <Heart className="h-4 w-4 text-gray-600 hover:text-red-500 transition-colors" />
           </button>
@@ -102,6 +145,7 @@ export function ProductCard({ product }: ProductCardProps) {
               variant="ghost"
               className="h-8 w-8"
               onClick={handleAddToCart}
+              disabled={!mounted}
             >
               <ShoppingBag className="h-4 w-4" />
             </Button>

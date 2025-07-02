@@ -1,49 +1,44 @@
-"use client"
-
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { CheckCircle, FileText, Mail, Package, CreditCard, Download } from "lucide-react"
+import { CheckCircle, FileText, Mail, Package, CreditCard, Download, ArrowLeft } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
-import { toast } from "react-hot-toast"
+import { createClient } from '@/lib/supabase/server'
+import { notFound } from "next/navigation"
+import { OrderActionsEnhanced } from "./order-actions-enhanced"
 
-export default function OrderConfirmationPage({
+export default async function OrderConfirmationPage({
   params,
 }: {
   params: { orderId: string }
 }) {
-  // For now, we'll use the orderId to create display data
-  // In production, this would fetch from the database
-  const orderData = {
-    orderNumber: params.orderId.startsWith('temp_') 
-      ? `PO${Date.now()}` 
-      : params.orderId,
-    email: "customer@example.com",
-    total: 1250.00,
-    items: 3,
-    estimatedDelivery: "2-3 business days",
+  const supabase = await createClient()
+  
+  // Fetch order details
+  const { data: order, error } = await supabase
+    .from('orders')
+    .select(`
+      *,
+      order_items (
+        *,
+        product:products (
+          name,
+          main_image_url,
+          brand:brands (name)
+        )
+      )
+    `)
+    .eq('id', params.orderId)
+    .single()
+  
+  if (error || !order) {
+    notFound()
   }
-
-  const downloadInvoice = async () => {
-    try {
-      const response = await fetch(`/api/orders/invoice?orderId=${params.orderId}`)
-      if (!response.ok) throw new Error('Failed to download invoice')
-      
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `invoice-${orderData.orderNumber}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
-      
-      toast.success('Invoice downloaded successfully')
-    } catch (error) {
-      toast.error('Failed to download invoice')
-    }
-  }
+  
+  // Parse delivery address
+  const deliveryAddress = typeof order.delivery_address === 'string' 
+    ? JSON.parse(order.delivery_address) 
+    : order.delivery_address
 
   return (
     <div className="min-h-screen bg-soft-sand">
@@ -61,13 +56,21 @@ export default function OrderConfirmationPage({
       </div>
 
       {/* Order Details */}
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="text-center mb-6">
             <p className="text-gray-600 mb-2">Order Number</p>
             <p className="text-2xl font-bold text-emerald-palm">
-              #{orderData.orderNumber}
+              #{order.order_number}
             </p>
+            {order.invoice_number && (
+              <>
+                <p className="text-gray-600 mt-2">Invoice Number</p>
+                <p className="text-lg font-semibold">
+                  #{order.invoice_number}
+                </p>
+              </>
+            )}
           </div>
 
           <div className="space-y-4">
@@ -76,7 +79,7 @@ export default function OrderConfirmationPage({
               <div>
                 <p className="font-medium">Confirmation Email Sent</p>
                 <p className="text-sm text-gray-600">
-                  We've sent your order details and invoice PDF to {orderData.email}
+                  We've sent your order details and invoice PDF to {order.customer_email}
                 </p>
               </div>
             </div>
@@ -86,7 +89,7 @@ export default function OrderConfirmationPage({
               <div>
                 <p className="font-medium">Estimated Delivery</p>
                 <p className="text-sm text-gray-600">
-                  {orderData.estimatedDelivery}
+                  2-3 business days to {deliveryAddress?.city}, {deliveryAddress?.province}
                 </p>
               </div>
             </div>
@@ -94,126 +97,93 @@ export default function OrderConfirmationPage({
             <div className="flex items-start gap-4">
               <CreditCard className="h-5 w-5 text-emerald-palm mt-0.5" />
               <div>
-                <p className="font-medium">Payment Instructions</p>
+                <p className="font-medium">Payment Status</p>
                 <p className="text-sm text-gray-600">
-                  Bank transfer details have been emailed to you
+                  {order.payment_status === 'pending' ? 'Awaiting Payment' : 'Payment Received'}
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* What's Next */}
+        {/* Order Items */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-lg font-display text-emerald-palm mb-4">
-            What Happens Next?
-          </h2>
-          <ol className="space-y-3 text-sm">
-            <li className="flex gap-3">
-              <span className="flex-shrink-0 w-6 h-6 bg-emerald-palm/10 text-emerald-palm rounded-full flex items-center justify-center font-medium">
-                1
-              </span>
-              <div>
-                <p className="font-medium">Make Payment</p>
-                <p className="text-gray-600">
-                  Complete the bank transfer using the details in your email
-                </p>
+          <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
+          <div className="space-y-4">
+            {order.order_items?.map((item: any) => (
+              <div key={item.id} className="flex gap-4">
+                <div className="relative w-20 h-20 bg-gray-100 rounded-lg overflow-hidden">
+                  {item.product?.main_image_url && (
+                    <Image
+                      src={item.product.main_image_url}
+                      alt={item.product.name}
+                      fill
+                      className="object-cover"
+                    />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium">{item.product?.name}</h3>
+                  <p className="text-sm text-gray-600">
+                    {item.product?.brand?.name} • Qty: {item.quantity}
+                  </p>
+                  <p className="font-medium mt-1">
+                    {formatCurrency(item.total)}
+                  </p>
+                </div>
               </div>
-            </li>
-            <li className="flex gap-3">
-              <span className="flex-shrink-0 w-6 h-6 bg-emerald-palm/10 text-emerald-palm rounded-full flex items-center justify-center font-medium">
-                2
-              </span>
-              <div>
-                <p className="font-medium">Order Processing</p>
-                <p className="text-gray-600">
-                  We'll process your order once payment is confirmed
-                </p>
+            ))}
+          </div>
+          
+          <div className="border-t mt-4 pt-4 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Subtotal</span>
+              <span>{formatCurrency(order.subtotal || order.total)}</span>
+            </div>
+            {order.delivery_fee > 0 && (
+              <div className="flex justify-between text-sm">
+                <span>Delivery</span>
+                <span>{formatCurrency(order.delivery_fee)}</span>
               </div>
-            </li>
-            <li className="flex gap-3">
-              <span className="flex-shrink-0 w-6 h-6 bg-emerald-palm/10 text-emerald-palm rounded-full flex items-center justify-center font-medium">
-                3
-              </span>
-              <div>
-                <p className="font-medium">Delivery</p>
-                <p className="text-gray-600">
-                  Your fragrances will be delivered within 2-3 business days
-                </p>
-              </div>
-            </li>
-          </ol>
+            )}
+            <div className="flex justify-between font-semibold text-lg">
+              <span>Total</span>
+              <span className="text-emerald-palm">{formatCurrency(order.total)}</span>
+            </div>
+          </div>
         </div>
 
-        {/* Bank Details Card */}
-        <div className="bg-[#0E5C4A] text-white rounded-lg p-6 mb-6">
-          <div className="flex items-center gap-3 mb-4">
-            <FileText className="h-5 w-5" />
-            <h3 className="font-display text-lg">Bank Transfer Details</h3>
+        {/* Payment Instructions */}
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6">
+          <h3 className="font-semibold text-amber-900 mb-2">
+            Payment Instructions
+          </h3>
+          <p className="text-amber-800 text-sm mb-3">
+            Please complete your payment using the following bank details:
+          </p>
+          <div className="bg-white rounded p-4 space-y-2 text-sm">
+            <div><span className="font-medium">Bank:</span> Standard Bank</div>
+            <div><span className="font-medium">Account Name:</span> Perfume Oasis (Pty) Ltd</div>
+            <div><span className="font-medium">Account Number:</span> 123456789</div>
+            <div><span className="font-medium">Branch Code:</span> 051001</div>
+            <div><span className="font-medium">Reference:</span> <span className="font-mono bg-amber-100 px-2 py-1 rounded">{order.order_number}</span></div>
           </div>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-white/80">Bank:</span>
-              <span className="font-medium">First National Bank</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-white/80">Account Name:</span>
-              <span className="font-medium">Perfume Oasis (Pty) Ltd</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-white/80">Account Number:</span>
-              <span className="font-medium">62891234567</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-white/80">Branch Code:</span>
-              <span className="font-medium">250655</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-white/80">Reference:</span>
-              <span className="font-medium">#{orderData.orderNumber}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-white/80">Amount:</span>
-              <span className="font-medium text-lg">{formatCurrency(orderData.total)}</span>
-            </div>
-          </div>
-          <p className="text-xs text-white/80 mt-4">
-            Please use your order number as the payment reference
+          <p className="text-amber-800 text-xs mt-3">
+            Important: Use your order number as the payment reference
           </p>
         </div>
 
         {/* Actions */}
-        <div className="space-y-3">
-          <Button 
-            onClick={downloadInvoice}
-            className="w-full bg-emerald-palm hover:bg-emerald-palm/90" 
-            size="lg"
-          >
-            <Download className="h-5 w-5 mr-2" />
-            Download Invoice
-          </Button>
-          <Link href="/account/orders" className="w-full">
-            <Button variant="outline" className="w-full" size="lg">
-              View Order Details
-            </Button>
-          </Link>
-          <Link href="/products" className="w-full">
-            <Button variant="outline" className="w-full" size="lg">
+        <OrderActionsEnhanced order={order} />
+
+        {/* Continue Shopping */}
+        <div className="text-center">
+          <Link href="/products">
+            <Button variant="outline" className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
               Continue Shopping
             </Button>
           </Link>
-        </div>
-
-        {/* Support */}
-        <div className="text-center mt-8 text-sm text-gray-600">
-          <p>Need help? Contact us at</p>
-          <a href="tel:+27111234567" className="text-emerald-palm font-medium">
-            +27 11 123 4567
-          </a>
-          <span className="mx-2">·</span>
-          <a href="mailto:orders@perfumeoasis.co.za" className="text-emerald-palm font-medium">
-            orders@perfumeoasis.co.za
-          </a>
         </div>
       </div>
     </div>

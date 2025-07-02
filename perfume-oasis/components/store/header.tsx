@@ -14,7 +14,7 @@ import {
   ChevronDown
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useCartStore } from '@/lib/store/cart'
+import { CartCount } from '@/components/cart/cart-count'
 import { cn } from '@/lib/utils'
 
 export function StoreHeader() {
@@ -22,9 +22,6 @@ export function StoreHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  
-  const cartItems = useCartStore(state => state.getTotalItems())
-  const toggleCart = useCartStore(state => state.toggleCart)
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -84,16 +81,35 @@ export function StoreHeader() {
                   Shop
                   <ChevronDown className="h-4 w-4" />
                 </Link>
-                <div className="absolute top-full left-0 w-48 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[60]">
-                  {categories.map((category) => (
+                <div className="absolute top-full left-0 w-56 bg-white shadow-lg rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[60] mt-2">
+                  <div className="py-2">
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Shop by Gender</div>
                     <Link
-                      key={category.href}
-                      href={category.href}
-                      className="block px-4 py-2 hover:bg-gray-50 hover:text-emerald-palm"
+                      href="/products?gender=women"
+                      className="block px-4 py-2 hover:bg-emerald-palm/10 hover:text-emerald-palm transition-colors"
                     >
-                      {category.name}
+                      <span className="font-medium">Women's Fragrances</span>
                     </Link>
-                  ))}
+                    <Link
+                      href="/products?gender=men"
+                      className="block px-4 py-2 hover:bg-emerald-palm/10 hover:text-emerald-palm transition-colors"
+                    >
+                      <span className="font-medium">Men's Fragrances</span>
+                    </Link>
+                    <Link
+                      href="/products?gender=unisex"
+                      className="block px-4 py-2 hover:bg-emerald-palm/10 hover:text-emerald-palm transition-colors"
+                    >
+                      <span className="font-medium">Unisex Fragrances</span>
+                    </Link>
+                    <div className="border-t my-2"></div>
+                    <Link
+                      href="/products"
+                      className="block px-4 py-2 hover:bg-emerald-palm/10 hover:text-emerald-palm transition-colors"
+                    >
+                      <span className="font-medium">All Products</span>
+                    </Link>
+                  </div>
                 </div>
               </div>
               <Link href="/brands" className="hover:text-emerald-palm transition-colors">
@@ -104,6 +120,9 @@ export function StoreHeader() {
               </Link>
               <Link href="/sale" className="hover:text-emerald-palm transition-colors text-red-500">
                 Sale
+              </Link>
+              <Link href="/about" className="hover:text-emerald-palm transition-colors">
+                About
               </Link>
             </nav>
             
@@ -117,38 +136,32 @@ export function StoreHeader() {
                 <Search className="h-5 w-5" />
               </Button>
               
-              <Link href="/wishlist" className="hidden sm:inline-flex">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                >
-                  <Heart className="h-5 w-5" />
-                </Button>
-              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden sm:inline-flex"
+                onClick={() => router.push('/wishlist')}
+              >
+                <Heart className="h-5 w-5" />
+              </Button>
               
-              <Link href="/account">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                >
-                  <User className="h-5 w-5" />
-                </Button>
-              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.push('/account')}
+              >
+                <User className="h-5 w-5" />
+              </Button>
               
-              <Link href="/cart">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  {cartItems > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-emerald-palm text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {cartItems}
-                    </span>
-                  )}
-                </Button>
-              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative"
+                onClick={() => router.push('/cart')}
+              >
+                <ShoppingCart className="h-5 w-5" />
+                <CartCount className="absolute -top-1 -right-1 bg-emerald-palm text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" />
+              </Button>
             </div>
           </div>
         </div>
@@ -168,7 +181,7 @@ export function StoreHeader() {
                 className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-palm/20"
                 autoFocus
               />
-              <Button type="submit">Search</Button>
+              <Button type="submit"><span>Search</span></Button>
             </form>
           </div>
         </div>
@@ -218,6 +231,13 @@ export function StoreHeader() {
               onClick={() => setIsMenuOpen(false)}
             >
               Sale
+            </Link>
+            <Link
+              href="/about"
+              className="block py-2 hover:text-emerald-palm font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              About
             </Link>
           </nav>
         </div>

@@ -223,8 +223,8 @@ export default function ShippingPage() {
               📞 +27 82 480 1311
             </a>
             <span className="hidden sm:block text-gray-400">|</span>
-            <a href="mailto:givenmoja12@gmail.com" className="text-emerald-palm font-medium">
-              ✉️ givenmoja12@gmail.com
+            <a href="mailto:info@perfumeoasis.co.za" className="text-emerald-palm font-medium">
+              ✉️ info@perfumeoasis.co.za
             </a>
           </div>
         </div>

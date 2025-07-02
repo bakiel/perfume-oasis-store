@@ -192,7 +192,7 @@ export default function TermsOfServicePage() {
           <div className="space-y-2 text-sm">
             <p><strong>Torrencial (Pty) Ltd</strong></p>
             <p>Trading as Perfume Oasis</p>
-            <p>Email: givenmoja12@gmail.com</p>
+            <p>Email: info@perfumeoasis.co.za</p>
             <p>Phone: +27 82 480 1311</p>
             <p>Address: Moloto Street No 30, Bela Bela, Limpopo, 0480</p>
             <p>Company Registration: 2025/213013/07</p>

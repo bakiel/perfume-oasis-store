@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { renderToBuffer } from '@react-pdf/renderer'
-import { InvoiceTemplate } from '@/lib/pdf/invoice-template'
-import React from 'react'
+import { createServiceClient } from '@/lib/supabase/server'
+import { generateInvoicePDF } from '@/lib/pdf/invoice'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,67 +16,64 @@ export async function GET(request: NextRequest) {
       )
     }
     
-    const supabase = await createClient()
+    const supabase = await createServiceClient()
     
-    // Fetch order details
+    // Fetch order details with items
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .select(`
         *,
-        items:order_items(
-          quantity,
-          unit_price,
-          total_price,
-          product:products(name, sku)
+        order_items (
+          *,
+          product:products (
+            name,
+            brand:brands (name)
+          )
         )
       `)
       .eq('id', orderId)
       .single()
     
     if (orderError || !order) {
+      console.error('Order fetch error:', orderError)
       return NextResponse.json(
         { error: 'Order not found' },
         { status: 404 }
       )
     }
     
-    // Get bank details from settings
-    const { data: bankDetailsData } = await supabase
-      .from('settings')
-      .select('value')
-      .eq('key', 'bank_details')
-      .single()
+    // Parse delivery address
+    const deliveryAddress = typeof order.delivery_address === 'string' 
+      ? JSON.parse(order.delivery_address) 
+      : order.delivery_address
     
     // Prepare invoice data
     const invoiceData = {
+      invoiceNumber: order.invoice_number || `INV${Date.now()}`,
       orderNumber: order.order_number,
-      orderDate: new Date(order.created_at),
+      date: order.created_at,
       customer: {
         name: order.customer_name,
         email: order.customer_email,
         phone: order.customer_phone,
-        address: order.shipping_address
+        address: deliveryAddress
       },
-      items: order.items.map((item: any) => ({
-        name: item.product.name,
+      items: order.order_items?.map((item: any) => ({
+        name: item.product?.name || 'Product',
+        brand: item.product?.brand?.name || '',
         quantity: item.quantity,
-        price: item.unit_price,
-        total: item.total_price
-      })),
-      subtotal: order.subtotal_amount,
-      shipping: order.shipping_amount,
-      tax: order.tax_amount,
-      total: order.total_amount,
-      paymentMethod: order.payment_method === 'bank_transfer' ? 'Bank Transfer' : 'Invoice',
-      bankDetails: bankDetailsData?.value ? {
-        ...bankDetailsData.value,
-        reference: order.order_number
-      } : null
+        price: item.price,
+        total: item.total
+      })) || [],
+      subtotal: order.subtotal || order.total,
+      delivery: order.delivery_fee || 0,
+      total: order.total || order.total_amount,
+      paymentStatus: order.payment_status === 'paid' ? 'Paid' : 'Pending',
+      paymentMethod: 'Bank Transfer',
     }
     
     // Generate PDF
-    const document = React.createElement(InvoiceTemplate, { data: invoiceData })
-    const pdfBuffer = await renderToBuffer(document as any)
+    const pdfBuffer = await generateInvoicePDF(invoiceData)
     
     // Return PDF
     return new NextResponse(pdfBuffer, {

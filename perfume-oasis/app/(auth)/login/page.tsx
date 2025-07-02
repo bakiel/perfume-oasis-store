@@ -47,43 +47,43 @@ export default function LoginPage() {
   }
   
   return (
-    <Card className="border-0 shadow-2xl">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-display text-emerald-palm">
+    <Card className="border-0 shadow-xl md:shadow-2xl">
+      <CardHeader className="space-y-1 p-6 md:p-8">
+        <CardTitle className="text-2xl md:text-3xl lg:text-4xl font-display text-emerald-palm">
           Welcome back
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-sm md:text-base">
           Enter your email and password to access your account
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleLogin}>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 md:space-y-6 p-6 md:p-8">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-sm md:text-base">Email</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
               <Input
                 id="email"
                 type="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10"
+                className="pl-10 md:pl-12 h-11 md:h-12 text-sm md:text-base"
                 required
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-sm md:text-base">Password</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
               <Input
                 id="password"
                 type="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10"
+                className="pl-10 md:pl-12 h-11 md:h-12 text-sm md:text-base"
                 required
               />
             </div>
@@ -97,15 +97,16 @@ export default function LoginPage() {
             </Link>
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
+        <CardFooter className="flex flex-col space-y-4 p-6 md:p-8">
           <Button 
             type="submit" 
-            className="w-full"
+            className="w-full h-11 md:h-12 text-sm md:text-base"
+            size="lg"
             disabled={loading}
           >
-            {loading ? "Signing in..." : "Sign in"}
+            <span>{loading ? "Signing in..." : "Sign in"}</span>
           </Button>
-          <p className="text-sm text-center text-gray-600">
+          <p className="text-xs md:text-sm text-center text-gray-600">
             Don't have an account?{" "}
             <Link 
               href="/register" 

@@ -139,7 +139,7 @@ interface InvoiceProps {
 
 const InvoiceDocument: React.FC<InvoiceProps> = ({ order, items }) => {
   const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0)
-  const deliveryFee = subtotal > 500 ? 0 : 60
+  const deliveryFee = subtotal > 1000 ? 0 : 150
   const total = subtotal + deliveryFee
 
   return (
@@ -261,4 +261,18 @@ export async function generateInvoice(order: any, items: any[]): Promise<Buffer>
     <InvoiceDocument order={order} items={items} />
   )
   return buffer
+}
+
+export async function generateInvoicePDF(invoiceData: any): Promise<Buffer> {
+  // Format order data for the invoice component
+  const orderData = {
+    order_number: invoiceData.orderNumber,
+    customer_name: invoiceData.customer.name,
+    customer_email: invoiceData.customer.email,
+    customer_phone: invoiceData.customer.phone,
+    delivery_address: invoiceData.customer.address,
+    created_at: invoiceData.date,
+  }
+  
+  return generateInvoice(orderData, invoiceData.items)
 }

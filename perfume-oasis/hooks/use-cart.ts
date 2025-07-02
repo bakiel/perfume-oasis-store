@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 export interface CartItem {
   id: string
@@ -19,12 +19,19 @@ interface CartStore {
   clearCart: () => void
   getTotal: () => number
   getItemCount: () => number
+  hydrated: boolean
+  setHydrated: (state: boolean) => void
 }
 
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      hydrated: false,
+      
+      setHydrated: (state) => {
+        set({ hydrated: state })
+      },
       
       addItem: (item) => {
         set((state) => {
@@ -79,6 +86,10 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: 'perfume-oasis-cart',
+      storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated(true)
+      },
     }
   )
 )

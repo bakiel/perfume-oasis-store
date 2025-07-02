@@ -4,38 +4,27 @@ import {
   Page, 
   Text, 
   View, 
-  StyleSheet, 
-  Image,
-  Font
+  StyleSheet,
+  Image
 } from '@react-pdf/renderer'
-import { format } from 'date-fns'
-
-// Register fonts (you can add custom fonts here)
-Font.register({
-  family: 'Helvetica-Bold',
-  src: 'https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlfBBc4.woff2'
-})
 
 // Create styles
 const styles = StyleSheet.create({
   page: {
     backgroundColor: '#ffffff',
-    padding: 40,
-    fontFamily: 'Helvetica'
+    padding: 25,
+    fontFamily: 'Helvetica',
+    fontSize: 8
   },
   header: {
-    marginBottom: 30,
+    marginBottom: 15,
     borderBottom: '2px solid #0E5C4A',
-    paddingBottom: 20
-  },
-  logo: {
-    width: 150,
-    marginBottom: 10
+    paddingBottom: 12
   },
   companyInfo: {
-    fontSize: 10,
+    fontSize: 7,
     color: '#666666',
-    lineHeight: 1.5
+    lineHeight: 1.3
   },
   title: {
     fontSize: 28,
@@ -47,165 +36,165 @@ const styles = StyleSheet.create({
   invoiceDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 30
+    marginBottom: 15
   },
   section: {
-    marginBottom: 20
+    marginBottom: 12
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: 'bold',
     color: '#0E5C4A',
-    marginBottom: 10,
+    marginBottom: 6,
     textTransform: 'uppercase'
   },
   row: {
     flexDirection: 'row',
-    marginBottom: 5
+    marginBottom: 3
   },
   label: {
-    fontSize: 10,
+    fontSize: 8,
     color: '#666666',
-    width: 100
+    width: 80
   },
   value: {
-    fontSize: 10,
+    fontSize: 8,
     color: '#333333',
     flex: 1
   },
   table: {
-    marginTop: 20,
-    marginBottom: 20
+    marginTop: 15,
+    marginBottom: 15
   },
   tableHeader: {
     flexDirection: 'row',
     backgroundColor: '#0E5C4A',
-    padding: 10,
+    padding: 8,
     color: '#ffffff',
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: 'bold'
   },
   tableRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: '#eeeeee',
-    padding: 10,
-    fontSize: 10
+    padding: 8,
+    fontSize: 8
   },
   tableCol1: { flex: 3 },
   tableCol2: { flex: 1, textAlign: 'center' },
   tableCol3: { flex: 1, textAlign: 'right' },
   tableCol4: { flex: 1, textAlign: 'right' },
   totals: {
-    marginTop: 20,
-    paddingTop: 20,
+    marginTop: 15,
+    paddingTop: 15,
     borderTop: '2px solid #0E5C4A'
   },
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginBottom: 5
+    marginBottom: 4
   },
   totalLabel: {
-    fontSize: 12,
+    fontSize: 10,
     marginRight: 20,
-    width: 100,
+    width: 80,
     textAlign: 'right'
   },
   totalValue: {
-    fontSize: 12,
-    width: 100,
+    fontSize: 10,
+    width: 80,
     textAlign: 'right'
   },
   grandTotal: {
-    marginTop: 10,
-    paddingTop: 10,
+    marginTop: 8,
+    paddingTop: 8,
     borderTop: '1px solid #cccccc'
   },
   grandTotalLabel: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     color: '#0E5C4A'
   },
   grandTotalValue: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     color: '#0E5C4A'
   },
   bankDetails: {
-    marginTop: 40,
-    padding: 20,
+    marginTop: 15,
+    padding: 12,
     backgroundColor: '#f8f8f8',
     borderRadius: 5
   },
   footer: {
     position: 'absolute',
-    bottom: 40,
-    left: 40,
-    right: 40,
+    bottom: 25,
+    left: 25,
+    right: 25,
     textAlign: 'center',
-    fontSize: 10,
+    fontSize: 7,
     color: '#666666',
     borderTop: '1px solid #eeeeee',
-    paddingTop: 20
+    paddingTop: 8
   },
   note: {
-    marginTop: 20,
-    padding: 15,
+    marginTop: 12,
+    padding: 8,
     backgroundColor: '#FFF9E6',
     borderRadius: 5,
-    fontSize: 10,
+    fontSize: 7,
     color: '#666666'
   },
   badge: {
     backgroundColor: '#C8A95B',
     color: '#ffffff',
-    padding: '5px 10px',
+    padding: '4px 8px',
     borderRadius: 3,
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 8,
     textAlign: 'center',
-    width: 150
+    width: 120
   }
 })
 
 interface InvoiceData {
+  invoiceNumber: string
   orderNumber: string
-  orderDate: Date
+  date: string
   customer: {
     name: string
     email: string
-    phone?: string
+    phone: string
     address: {
       street: string
+      suburb: string
       city: string
       province: string
       postalCode: string
     }
   }
   items: Array<{
-    name: string
+    product_name: string
+    product_brand: string
     quantity: number
     price: number
-    total: number
+    subtotal: number
   }>
   subtotal: number
-  shipping: number
-  tax: number
+  delivery: number
   total: number
+  paymentStatus: string
   paymentMethod: string
-  bankDetails?: {
-    bankName: string
-    accountName: string
-    accountNumber: string
-    branchCode: string
-    reference: string
-  }
 }
 
-export const InvoiceTemplate: React.FC<{ data: InvoiceData }> = ({ data }) => {
+export const InvoiceDocument: React.FC<InvoiceData> = (data) => {
   const formatCurrency = (amount: number) => `R ${amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' })
+  }
 
   return (
     <Document>
@@ -213,24 +202,53 @@ export const InvoiceTemplate: React.FC<{ data: InvoiceData }> = ({ data }) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <View>
-              <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#0E5C4A' }}>
-                PERFUME OASIS
-              </Text>
+            <View style={{ flex: 1 }}>
+              {/* Logo */}
+              <View style={{ marginBottom: 10 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+                  {/* Logo Mark */}
+                  <View style={{ 
+                    width: 30, 
+                    height: 30, 
+                    backgroundColor: '#0E5C4A', 
+                    borderRadius: 15,
+                    marginRight: 8,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                    <Text style={{ color: '#C8A95B', fontSize: 16, fontWeight: 'bold' }}>PO</Text>
+                  </View>
+                  {/* Company Name */}
+                  <View>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#0E5C4A', letterSpacing: 0.5 }}>
+                      PERFUME OASIS
+                    </Text>
+                    <Text style={{ fontSize: 8, color: '#C8A95B', marginTop: -2 }}>
+                      Premium Fragrances
+                    </Text>
+                  </View>
+                </View>
+              </View>
               <Text style={styles.companyInfo}>
-                Luxury Fragrances for South Africa{'\n'}
-                123 Fragrance Avenue{'\n'}
-                Johannesburg, Gauteng 2000{'\n'}
-                Tel: +27 11 123 4567{'\n'}
-                Email: info@perfumeoasis.co.za
+                Trading as: Perfume Oasis{'\n'}
+                Torrencial (Pty) Ltd{'\n'}
+                Company Reg: 2024/123456/07
               </Text>
             </View>
-            <View style={{ alignItems: 'flex-end' }}>
+            <View style={{ flex: 1, alignItems: 'center' }}>
               <View style={styles.badge}>
-                <Text>TAX INVOICE</Text>
+                <Text>INVOICE</Text>
               </View>
-              <Text style={{ fontSize: 10, color: '#666666' }}>
-                VAT No: 4590123456
+              <Text style={{ fontSize: 10, color: '#666666', marginTop: 5 }}>
+                Original
+              </Text>
+            </View>
+            <View style={{ flex: 1, alignItems: 'flex-end' }}>
+              <Text style={[styles.companyInfo, { textAlign: 'right' }]}>
+                www.perfumeoasis.co.za{'\n'}
+                orders@perfumeoasis.co.za{'\n'}
+                info@perfumeoasis.co.za{'\n'}
+                +27 82 480 1311
               </Text>
             </View>
           </View>
@@ -245,8 +263,8 @@ export const InvoiceTemplate: React.FC<{ data: InvoiceData }> = ({ data }) => {
             </Text>
             <Text style={{ fontSize: 10, color: '#666666', lineHeight: 1.5 }}>
               {data.customer.address.street}{'\n'}
-              {data.customer.address.city}, {data.customer.address.province}{'\n'}
-              {data.customer.address.postalCode}{'\n'}
+              {data.customer.address.suburb}, {data.customer.address.city}{'\n'}
+              {data.customer.address.province} {data.customer.address.postalCode}{'\n'}
               {data.customer.email}{'\n'}
               {data.customer.phone}
             </Text>
@@ -256,11 +274,15 @@ export const InvoiceTemplate: React.FC<{ data: InvoiceData }> = ({ data }) => {
             <Text style={styles.sectionTitle}>Invoice Details</Text>
             <View style={styles.row}>
               <Text style={styles.label}>Invoice No:</Text>
+              <Text style={styles.value}>{data.invoiceNumber}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.label}>Order No:</Text>
               <Text style={styles.value}>{data.orderNumber}</Text>
             </View>
             <View style={styles.row}>
               <Text style={styles.label}>Date:</Text>
-              <Text style={styles.value}>{format(data.orderDate, 'dd MMM yyyy')}</Text>
+              <Text style={styles.value}>{formatDate(data.date)}</Text>
             </View>
             <View style={styles.row}>
               <Text style={styles.label}>Payment Method:</Text>
@@ -280,10 +302,13 @@ export const InvoiceTemplate: React.FC<{ data: InvoiceData }> = ({ data }) => {
           
           {data.items.map((item, index) => (
             <View key={index} style={styles.tableRow}>
-              <Text style={styles.tableCol1}>{item.name}</Text>
+              <Text style={styles.tableCol1}>
+                {item.product_name}{'\n'}
+                <Text style={{ fontSize: 9, color: '#666666' }}>{item.product_brand}</Text>
+              </Text>
               <Text style={styles.tableCol2}>{item.quantity}</Text>
               <Text style={styles.tableCol3}>{formatCurrency(item.price)}</Text>
-              <Text style={styles.tableCol4}>{formatCurrency(item.total)}</Text>
+              <Text style={styles.tableCol4}>{formatCurrency(item.subtotal)}</Text>
             </View>
           ))}
         </View>
@@ -295,14 +320,10 @@ export const InvoiceTemplate: React.FC<{ data: InvoiceData }> = ({ data }) => {
             <Text style={styles.totalValue}>{formatCurrency(data.subtotal)}</Text>
           </View>
           <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Shipping:</Text>
+            <Text style={styles.totalLabel}>Delivery:</Text>
             <Text style={styles.totalValue}>
-              {data.shipping === 0 ? 'FREE' : formatCurrency(data.shipping)}
+              {data.delivery === 0 ? 'FREE' : formatCurrency(data.delivery)}
             </Text>
-          </View>
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>VAT (15%):</Text>
-            <Text style={styles.totalValue}>{formatCurrency(data.tax)}</Text>
           </View>
           
           <View style={[styles.totalRow, styles.grandTotal]}>
@@ -314,46 +335,44 @@ export const InvoiceTemplate: React.FC<{ data: InvoiceData }> = ({ data }) => {
         </View>
 
         {/* Bank Details */}
-        {data.bankDetails && (
-          <View style={styles.bankDetails}>
-            <Text style={styles.sectionTitle}>Banking Details for Payment</Text>
-            <View style={{ flexDirection: 'row', marginTop: 10 }}>
-              <View style={{ flex: 1 }}>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Bank:</Text>
-                  <Text style={styles.value}>{data.bankDetails.bankName}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Account Name:</Text>
-                  <Text style={styles.value}>{data.bankDetails.accountName}</Text>
-                </View>
+        <View style={styles.bankDetails}>
+          <Text style={styles.sectionTitle}>Banking Details for Payment</Text>
+          <View style={{ flexDirection: 'row', marginTop: 10 }}>
+            <View style={{ flex: 1 }}>
+              <View style={styles.row}>
+                <Text style={styles.label}>Beneficiary:</Text>
+                <Text style={styles.value}>Torrencial</Text>
               </View>
-              <View style={{ flex: 1 }}>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Account No:</Text>
-                  <Text style={styles.value}>{data.bankDetails.accountNumber}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Branch Code:</Text>
-                  <Text style={styles.value}>{data.bankDetails.branchCode}</Text>
-                </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Bank:</Text>
+                <Text style={styles.value}>Nedbank</Text>
               </View>
             </View>
-            <View style={[styles.row, { marginTop: 10 }]}>
-              <Text style={[styles.label, { fontWeight: 'bold' }]}>Reference:</Text>
-              <Text style={[styles.value, { fontWeight: 'bold', color: '#0E5C4A' }]}>
-                {data.bankDetails.reference}
-              </Text>
+            <View style={{ flex: 1 }}>
+              <View style={styles.row}>
+                <Text style={styles.label}>Account No:</Text>
+                <Text style={styles.value}>1313614866</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Branch Code:</Text>
+                <Text style={styles.value}>198765</Text>
+              </View>
             </View>
           </View>
-        )}
+          <View style={[styles.row, { marginTop: 10 }]}>
+            <Text style={[styles.label, { fontWeight: 'bold' }]}>Reference:</Text>
+            <Text style={[styles.value, { fontWeight: 'bold', color: '#0E5C4A' }]}>
+              {data.orderNumber}
+            </Text>
+          </View>
+        </View>
 
         {/* Note */}
         <View style={styles.note}>
           <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Important:</Text>
           <Text>
             Please use your order number as the payment reference.{'\n'}
-            Email proof of payment to: payments@perfumeoasis.co.za{'\n'}
+            Email proof of payment to: orders@perfumeoasis.co.za{'\n'}
             Your order will be processed within 24 hours of payment confirmation.
           </Text>
         </View>
@@ -362,7 +381,7 @@ export const InvoiceTemplate: React.FC<{ data: InvoiceData }> = ({ data }) => {
         <View style={styles.footer}>
           <Text>
             Thank you for choosing Perfume Oasis!{'\n'}
-            www.perfumeoasis.co.za | info@perfumeoasis.co.za | +27 11 123 4567
+            www.perfumeoasis.co.za | orders@perfumeoasis.co.za | info@perfumeoasis.co.za
           </Text>
         </View>
       </Page>

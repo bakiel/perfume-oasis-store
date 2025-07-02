@@ -123,26 +123,36 @@ export default function AboutPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="bg-emerald-palm/10 rounded-lg p-8 text-center">
-          <h3 className="text-2xl font-display text-emerald-palm mb-4">
-            Ready to Find Your Signature Scent?
-          </h3>
-          <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
-            Explore our carefully curated collection of authentic luxury fragrances. 
-            Whether you're looking for a daily signature or a special occasion scent, 
-            we're here to help you discover the perfect fragrance.
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Link href="/products">
-              <Button>
-                Explore Collection
-              </Button>
-            </Link>
-            <Link href="/contact">
-              <Button variant="outline">
-                Get in Touch
-              </Button>
-            </Link>
+        <section className="relative rounded-lg overflow-hidden">
+          <Image
+            src="/images/backgrounds/forest-scene-2.jpg"
+            alt="Enchanted forest background"
+            fill
+            className="object-cover"
+            quality={90}
+          />
+          <div className="absolute inset-0 bg-emerald-900/70 backdrop-blur-sm" />
+          <div className="relative z-10 p-8 text-center">
+            <h3 className="text-2xl font-display text-white mb-4">
+              Ready to Find Your Signature Scent?
+            </h3>
+            <p className="text-white/90 mb-6 max-w-2xl mx-auto">
+              Explore our carefully curated collection of authentic luxury fragrances. 
+              Whether you're looking for a daily signature or a special occasion scent, 
+              we're here to help you discover the perfect fragrance.
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Link href="/products">
+                <Button className="bg-gold-400 hover:bg-gold-500 text-emerald-900 font-semibold">
+                  Explore Collection
+                </Button>
+              </Link>
+              <Link href="/contact">
+                <Button variant="outline" className="border-white text-white hover:bg-white/10">
+                  Get in Touch
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
       </div>

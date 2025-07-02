@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useCartStore } from "@/hooks/use-cart"
 import { ShoppingBag } from "lucide-react"
@@ -28,21 +29,49 @@ export function AddToCartButton({
   variant = "default",
   size = "default"
 }: AddToCartButtonProps) {
-  const addItem = useCartStore((state) => state.addItem)
+  const { addItem } = useCartStore()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleAddToCart = () => {
     if (disabled) return
     
-    addItem({
-      id: product.id,
-      name: product.name,
-      brand: product.brand,
-      price: product.price,
-      image: product.image,
-      size: product.size,
-    })
+    console.log('AddToCartButton - Adding to cart:', product)
     
-    toast.success(`${product.name} added to cart`)
+    try {
+      addItem({
+        id: product.id,
+        name: product.name,
+        brand: product.brand,
+        price: product.price,
+        image: product.image,
+        size: product.size,
+      })
+      
+      toast.success(`${product.name} added to cart`)
+      console.log('Item added successfully')
+    } catch (error) {
+      console.error('AddToCartButton - Error adding to cart:', error)
+      toast.error('Failed to add item to cart')
+    }
+  }
+
+  // Don't render until client-side hydration is complete
+  if (!mounted) {
+    return (
+      <Button
+        disabled
+        size={variant === "icon" ? "icon" : size}
+        variant={variant === "icon" ? "ghost" : "default"}
+        className={cn(variant === "icon" ? "h-8 w-8" : "gap-2", className)}
+      >
+        <ShoppingBag className="h-4 w-4" />
+        {variant !== "icon" && <span>Add to Cart</span>}
+      </Button>
+    )
   }
 
   if (variant === "icon") {
@@ -67,7 +96,7 @@ export function AddToCartButton({
       className={cn("gap-2", className)}
     >
       <ShoppingBag className="h-4 w-4" />
-      {disabled ? "Out of Stock" : "Add to Cart"}
+      <span>{disabled ? "Out of Stock" : "Add to Cart"}</span>
     </Button>
   )
 }

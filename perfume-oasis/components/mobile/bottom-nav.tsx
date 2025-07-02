@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, Search, ShoppingBag, User, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useCartStore } from "@/hooks/use-cart"
+import { CartCount } from "@/components/cart/cart-count"
 import { useState, useEffect } from "react"
 
 const navItems = [
@@ -16,7 +16,6 @@ const navItems = [
 
 export function BottomNav() {
   const pathname = usePathname()
-  const itemCount = useCartStore((state) => state.items.length)
   const [showAdminButton, setShowAdminButton] = useState(false)
 
   useEffect(() => {
@@ -46,10 +45,8 @@ export function BottomNav() {
               >
                 <div className="relative">
                   <item.icon className="h-5 w-5" />
-                  {item.label === "Cart" && itemCount > 0 && (
-                    <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-royal-gold text-white text-xs flex items-center justify-center font-medium">
-                      {itemCount}
-                    </span>
+                  {item.label === "Cart" && (
+                    <CartCount className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-royal-gold text-white text-xs flex items-center justify-center font-medium" />
                   )}
                 </div>
                 <span className="text-xs font-medium">{item.label}</span>

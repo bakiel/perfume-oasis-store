@@ -12,6 +12,9 @@ import toast from "react-hot-toast"
 import { ChevronLeft, CreditCard, CheckCircle, MapPin, User, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { AuthDialog } from "@/components/checkout/auth-dialog"
+import { createClient } from "@/lib/supabase/client"
+import { Loader2 } from "lucide-react"
 
 const checkoutSchema = z.object({
   // Personal Details
@@ -30,12 +33,61 @@ const checkoutSchema = z.object({
 
 type CheckoutForm = z.infer<typeof checkoutSchema>
 
+// Loading Overlay Component
+const LoadingOverlay = () => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center z-50">
+    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white mb-4"></div>
+    <p className="text-white text-lg font-semibold">Processing your order, please wait...</p>
+  </div>
+)
+
+// Error Dialog Component
+const ErrorDialog = ({ 
+  message, 
+  onClose,
+  invalidItems,
+  onRemoveInvalid 
+}: { 
+  message: string; 
+  onClose: () => void;
+  invalidItems?: string[];
+  onRemoveInvalid?: () => void;
+}) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center z-50">
+    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+      <h3 className="text-lg font-semibold text-red-600 mb-3">Checkout Error</h3>
+      <p className="text-gray-700 mb-4">{message}</p>
+      <div className="space-y-2">
+        {invalidItems && invalidItems.length > 0 && onRemoveInvalid && (
+          <button 
+            onClick={onRemoveInvalid}
+            className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            <span>Remove Unavailable Items</span>
+          </button>
+        )}
+        <button 
+          onClick={onClose}
+          className="w-full px-4 py-2 bg-emerald-palm text-white rounded hover:bg-emerald-palm/90"
+        >
+          <span>Close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+)
+
 export default function CheckoutPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
-  const { items, getTotal, clearCart } = useCartStore()
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showAuthDialog, setShowAuthDialog] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [validatingCart, setValidatingCart] = useState(true)
+  const [invalidItems, setInvalidItems] = useState<string[]>([])
+  const { items, getTotal, clearCart, removeItem } = useCartStore()
   
   // All hooks must be called before any conditional returns
   const {
@@ -51,19 +103,90 @@ export default function CheckoutPage() {
   
   useEffect(() => {
     setIsMounted(true)
-  }, [])
+    // Check if user is authenticated
+    const checkAuth = async () => {
+      const supabaseClient = createClient()
+      const { data: { user } } = await supabaseClient.auth.getUser()
+      setUser(user)
+    }
+    checkAuth()
+    
+    // Validate cart items
+    const validateCart = async () => {
+      if (items.length === 0) {
+        setValidatingCart(false)
+        return
+      }
+      
+      const invalid: string[] = []
+      const supabaseClient = createClient()
+      
+      // First, automatically remove known problematic items
+      const problematicItems = items.filter(item => 
+        item.name.toLowerCase().includes('ocean breeze') ||
+        item.name === 'Ocean Breeze'
+      )
+      
+      if (problematicItems.length > 0) {
+        console.log('Removing problematic items:', problematicItems)
+        problematicItems.forEach(item => removeItem(item.id))
+        // After removing, get updated items
+        const updatedItems = useCartStore.getState().items
+        if (updatedItems.length === 0) {
+          router.push('/products')
+          return
+        }
+      }
+      
+      // Now validate remaining items
+      for (const item of items) {
+        // Skip if already removed
+        if (problematicItems.find(p => p.id === item.id)) continue
+        
+        const { data: product } = await supabaseClient
+          .from('products')
+          .select('id')
+          .eq('id', item.id)
+          .single()
+        
+        if (!product) {
+          invalid.push(item.id)
+        }
+      }
+      
+      setInvalidItems(invalid)
+      setValidatingCart(false)
+      
+      if (invalid.length > 0) {
+        const itemNames = items
+          .filter(item => invalid.includes(item.id))
+          .map(item => item.name)
+          .join(', ')
+        
+        setErrorMessage(`The following products are no longer available: ${itemNames}. Please remove them from your cart.`)
+        toast.error('Some items in your cart are no longer available')
+      }
+    }
+    
+    validateCart()
+  }, [items])
 
   // Prevent SSR issues and show loading state
-  if (!isMounted) {
+  if (!isMounted || validatingCart) {
     return (
       <div className="min-h-screen bg-[#F6F3EF] flex items-center justify-center">
-        <div className="animate-pulse text-[#0E5C4A]">Loading checkout...</div>
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-8 w-8 animate-spin text-[#0E5C4A] mb-4" />
+          <div className="text-[#0E5C4A]">
+            {validatingCart ? 'Validating cart items...' : 'Loading checkout...'}
+          </div>
+        </div>
       </div>
     )
   }
 
   const total = getTotal()
-  const deliveryFee = total > 500 ? 0 : 60
+  const deliveryFee = total > 1000 ? 0 : 150
 
   // Redirect if cart is empty
   if (items.length === 0) {
@@ -95,20 +218,68 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customer: data,
-          items,
+          items: items.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+          subtotal: total,
+          delivery: deliveryFee,
           total: total + deliveryFee,
         }),
       })
 
       if (response.ok) {
-        const { orderId } = await response.json()
-        clearCart()
-        router.push(`/order-confirmation/${orderId}`)
+        const result = await response.json()
+        if (result.success) {
+          // Trigger download after a short delay to ensure order is created
+          setTimeout(() => {
+            window.open(`/api/invoices/download?orderId=${result.orderId}&invoiceNumber=${result.invoiceNumber}`, '_blank')
+          }, 1000)
+          
+          clearCart()
+          router.push(`/order-confirmation/${result.orderId}`)
+        } else {
+          // Check if it's an authentication error
+          if (result.requiresAuth) {
+            setShowAuthDialog(true)
+          } else {
+            throw new Error(result.error || 'Failed to create order')
+          }
+        }
       } else {
-        throw new Error('Failed to create order')
+        const errorData = await response.json()
+        // Check if it's an authentication error
+        if (response.status === 401 || errorData.requiresAuth) {
+          setShowAuthDialog(true)
+        } else {
+          throw new Error(errorData.error || 'Failed to create order')
+        }
       }
-    } catch (error) {
-      toast.error('Something went wrong. Please try again.')
+    } catch (error: any) {
+      console.error('Checkout error:', error)
+      const errorMsg = error.message || 'Something went wrong. Please try again.'
+      setErrorMessage(errorMsg)
+      
+      // Check if it's a product not found error
+      if (errorMsg.includes('is no longer available')) {
+        // Extract product name from error message
+        const match = errorMsg.match(/Product "([^"]+)" is no longer available/);
+        if (match) {
+          const productName = match[1];
+          // Find the invalid item by name
+          const invalidItem = items.find(item => item.name === productName);
+          if (invalidItem) {
+            setInvalidItems([invalidItem.id]);
+          } else {
+            // If we can't find specific item, mark all as potentially invalid
+            setInvalidItems(items.map(item => item.id));
+          }
+        }
+      }
+      
+      toast.error(errorMsg)
     } finally {
       setIsSubmitting(false)
     }
@@ -122,6 +293,34 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-[#F6F3EF]">
+      {/* Loading Overlay */}
+      {isSubmitting && <LoadingOverlay />}
+      
+      {/* Error Dialog */}
+      {errorMessage && (
+        <ErrorDialog 
+          message={errorMessage} 
+          onClose={() => setErrorMessage(null)}
+          invalidItems={invalidItems}
+          onRemoveInvalid={
+            invalidItems.length > 0 
+              ? () => {
+                  // Remove invalid items from cart
+                  invalidItems.forEach(id => removeItem(id))
+                  // Clear error state
+                  setInvalidItems([])
+                  setErrorMessage(null)
+                  // Redirect to fix-cart page for proper validation
+                  router.push('/fix-cart')
+                }
+              : undefined
+          }
+        />
+      )}
+      
+      {/* Auth Dialog */}
+      <AuthDialog isOpen={showAuthDialog} onClose={() => setShowAuthDialog(false)} />
+      
       {/* Desktop Header */}
       <header className="bg-white border-b border-gray-200 hidden lg:block">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -392,6 +591,15 @@ export default function CheckoutPage() {
                       <CreditCard className="h-6 w-6 text-[#0E5C4A]" />
                       <h3 className="font-medium text-gray-900">Payment Method</h3>
                     </div>
+                    
+                    {/* Account Required Notice */}
+                    {!user && (
+                      <div className="bg-blue-50 border border-blue-200 rounded p-3 mb-4 text-sm text-blue-800">
+                        <p className="font-medium">Account Required</p>
+                        <p>You need to be logged in to complete your purchase. You'll be prompted to log in when placing your order.</p>
+                      </div>
+                    )}
+                    
                     <div className="bg-[#0E5C4A]/10 p-4 rounded-lg">
                       <p className="font-medium text-[#0E5C4A] mb-2">Bank Transfer</p>
                       <p className="text-sm text-gray-700">
@@ -412,7 +620,7 @@ export default function CheckoutPage() {
                     onClick={() => setCurrentStep(currentStep - 1)}
                     size="lg"
                   >
-                    Back
+                    <span>Back</span>
                   </Button>
                 )}
                 <div className={currentStep === 1 ? 'ml-auto' : ''}>
@@ -423,8 +631,10 @@ export default function CheckoutPage() {
                       size="lg"
                       className="bg-[#0E5C4A] hover:bg-[#0A4A3B]"
                     >
-                      Continue
-                      <ArrowRight className="h-5 w-5 ml-2" />
+                      <span className="flex items-center gap-2">
+                        Continue
+                        <ArrowRight className="h-5 w-5" />
+                      </span>
                     </Button>
                   ) : (
                     <Button
@@ -433,7 +643,7 @@ export default function CheckoutPage() {
                       size="lg"
                       className="bg-[#0E5C4A] hover:bg-[#0A4A3B] min-w-[200px]"
                     >
-                      {isSubmitting ? "Processing..." : "Place Order"}
+                      <span>{isSubmitting ? "Processing..." : "Place Order"}</span>
                     </Button>
                   )}
                 </div>
@@ -483,7 +693,7 @@ export default function CheckoutPage() {
                 </div>
                 {deliveryFee > 0 && (
                   <p className="text-xs text-gray-500">
-                    Free delivery on orders over R500
+                    Free delivery on orders over R1,000
                   </p>
                 )}
                 <div className="flex justify-between font-bold text-lg pt-3 border-t">
@@ -518,7 +728,7 @@ export default function CheckoutPage() {
               onClick={() => setCurrentStep(currentStep - 1)}
               className="flex-1"
             >
-              Back
+              <span>Back</span>
             </Button>
           )}
           {currentStep < 3 ? (
@@ -527,7 +737,7 @@ export default function CheckoutPage() {
               onClick={handleContinue}
               className="flex-1 bg-[#0E5C4A] hover:bg-[#0A4A3B]"
             >
-              Continue
+              <span>Continue</span>
             </Button>
           ) : (
             <Button
@@ -535,7 +745,7 @@ export default function CheckoutPage() {
               disabled={isSubmitting}
               className="flex-1 bg-[#0E5C4A] hover:bg-[#0A4A3B]"
             >
-              {isSubmitting ? "Processing..." : "Place Order"}
+              <span>{isSubmitting ? "Processing..." : "Place Order"}</span>
             </Button>
           )}
         </div>

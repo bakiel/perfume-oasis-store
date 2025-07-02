@@ -231,7 +231,7 @@ export default function ReturnsPage() {
           </p>
           <div className="space-y-2 text-sm">
             <p className="font-medium">Returns Department</p>
-            <p>Email: givenmoja12@gmail.com</p>
+            <p>Email: info@perfumeoasis.co.za</p>
             <p>Phone: +27 82 480 1311</p>
             <p className="text-xs text-gray-500 mt-3">
               Please include your order number in all correspondence

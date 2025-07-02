@@ -26,19 +26,22 @@ import { format } from 'date-fns'
 
 interface Promotion {
   id: string
-  title: string
-  subtitle: string | null
+  name: string
   description: string | null
-  discount_percentage: number | null
-  discount_amount: number | null
-  promo_code: string | null
-  banner_image_url: string | null
-  link_url: string | null
-  position: number
+  type: 'percentage' | 'fixed_amount' | 'bogo' | 'free_shipping'
+  value: number
+  minimum_purchase: number
+  code: string | null
+  auto_apply: boolean
   is_active: boolean
-  show_on_homepage: boolean
   start_date: string
   end_date: string | null
+  usage_limit: number | null
+  usage_count: number
+  product_ids: string[]
+  category_ids: string[]
+  display_on_homepage: boolean
+  priority: number
   created_at: string
   updated_at: string
 }
@@ -49,17 +52,17 @@ export default function PromotionsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingPromotion, setEditingPromotion] = useState<Promotion | null>(null)
   const [formData, setFormData] = useState({
-    title: '',
-    subtitle: '',
+    name: '',
     description: '',
-    discount_percentage: '',
-    discount_amount: '',
-    promo_code: '',
-    banner_image_url: '',
-    link_url: '',
-    position: '0',
+    type: 'percentage' as 'percentage' | 'fixed_amount' | 'bogo' | 'free_shipping',
+    value: '',
+    minimum_purchase: '0',
+    code: '',
+    auto_apply: false,
     is_active: true,
-    show_on_homepage: true,
+    display_on_homepage: true,
+    priority: '0',
+    usage_limit: '',
     start_date: '',
     end_date: ''
   })
@@ -74,7 +77,8 @@ export default function PromotionsPage() {
     const { data, error } = await supabase
       .from('promotions')
       .select('*')
-      .order('position', { ascending: true })
+      .order('priority', { ascending: false })
+      .order('created_at', { ascending: false })
 
     if (error) {
       toast.error('Failed to load promotions')
@@ -87,17 +91,17 @@ export default function PromotionsPage() {
   const handleEdit = (promotion: Promotion) => {
     setEditingPromotion(promotion)
     setFormData({
-      title: promotion.title,
-      subtitle: promotion.subtitle || '',
+      name: promotion.name,
       description: promotion.description || '',
-      discount_percentage: promotion.discount_percentage?.toString() || '',
-      discount_amount: promotion.discount_amount?.toString() || '',
-      promo_code: promotion.promo_code || '',
-      banner_image_url: promotion.banner_image_url || '',
-      link_url: promotion.link_url || '',
-      position: promotion.position.toString(),
+      type: promotion.type,
+      value: promotion.value.toString(),
+      minimum_purchase: promotion.minimum_purchase.toString(),
+      code: promotion.code || '',
+      auto_apply: promotion.auto_apply,
       is_active: promotion.is_active,
-      show_on_homepage: promotion.show_on_homepage,
+      display_on_homepage: promotion.display_on_homepage,
+      priority: promotion.priority.toString(),
+      usage_limit: promotion.usage_limit?.toString() || '',
       start_date: promotion.start_date ? new Date(promotion.start_date).toISOString().split('T')[0] : '',
       end_date: promotion.end_date ? new Date(promotion.end_date).toISOString().split('T')[0] : ''
     })
@@ -108,17 +112,17 @@ export default function PromotionsPage() {
     e.preventDefault()
     
     const promotionData = {
-      title: formData.title,
-      subtitle: formData.subtitle || null,
+      name: formData.name,
       description: formData.description || null,
-      discount_percentage: formData.discount_percentage ? parseInt(formData.discount_percentage) : null,
-      discount_amount: formData.discount_amount ? parseFloat(formData.discount_amount) : null,
-      promo_code: formData.promo_code || null,
-      banner_image_url: formData.banner_image_url || null,
-      link_url: formData.link_url || null,
-      position: parseInt(formData.position),
+      type: formData.type,
+      value: parseFloat(formData.value),
+      minimum_purchase: parseFloat(formData.minimum_purchase),
+      code: formData.code || null,
+      auto_apply: formData.auto_apply,
       is_active: formData.is_active,
-      show_on_homepage: formData.show_on_homepage,
+      display_on_homepage: formData.display_on_homepage,
+      priority: parseInt(formData.priority),
+      usage_limit: formData.usage_limit ? parseInt(formData.usage_limit) : null,
       start_date: formData.start_date || null,
       end_date: formData.end_date || null
     }
@@ -172,17 +176,17 @@ export default function PromotionsPage() {
   const resetForm = () => {
     setEditingPromotion(null)
     setFormData({
-      title: '',
-      subtitle: '',
+      name: '',
       description: '',
-      discount_percentage: '',
-      discount_amount: '',
-      promo_code: '',
-      banner_image_url: '',
-      link_url: '',
-      position: '0',
+      type: 'percentage',
+      value: '',
+      minimum_purchase: '0',
+      code: '',
+      auto_apply: false,
       is_active: true,
-      show_on_homepage: true,
+      display_on_homepage: true,
+      priority: '0',
+      usage_limit: '',
       start_date: '',
       end_date: ''
     })
@@ -208,33 +212,49 @@ export default function PromotionsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Position</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Discount</TableHead>
+              <TableHead>Priority</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Type & Value</TableHead>
+              <TableHead>Code</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Homepage</TableHead>
-              <TableHead>Start Date</TableHead>
-              <TableHead>End Date</TableHead>
+              <TableHead>Valid Period</TableHead>
+              <TableHead>Usage</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {promotions.map((promotion) => (
               <TableRow key={promotion.id}>
-                <TableCell>{promotion.position}</TableCell>
+                <TableCell>{promotion.priority}</TableCell>
                 <TableCell>
                   <div>
-                    <p className="font-medium">{promotion.title}</p>
-                    {promotion.subtitle && (
-                      <p className="text-sm text-gray-500">{promotion.subtitle}</p>
+                    <p className="font-medium">{promotion.name}</p>
+                    {promotion.description && (
+                      <p className="text-sm text-gray-500">{promotion.description}</p>
                     )}
                   </div>
                 </TableCell>
                 <TableCell>
-                  {promotion.discount_percentage && `${promotion.discount_percentage}%`}
-                  {promotion.discount_amount && `R ${promotion.discount_amount}`}
-                  {promotion.promo_code && (
-                    <p className="text-sm text-gray-500">{promotion.promo_code}</p>
+                  <div>
+                    <p className="font-medium">
+                      {promotion.type === 'percentage' && `${promotion.value}% off`}
+                      {promotion.type === 'fixed_amount' && `R${promotion.value} off`}
+                      {promotion.type === 'bogo' && 'Buy One Get One'}
+                      {promotion.type === 'free_shipping' && 'Free Shipping'}
+                    </p>
+                    {promotion.minimum_purchase > 0 && (
+                      <p className="text-sm text-gray-500">Min: R{promotion.minimum_purchase}</p>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {promotion.code ? (
+                    <code className="bg-gray-100 px-2 py-1 rounded text-sm">
+                      {promotion.code}
+                    </code>
+                  ) : (
+                    <span className="text-gray-500">Auto-apply</span>
                   )}
                 </TableCell>
                 <TableCell>
@@ -247,13 +267,23 @@ export default function PromotionsPage() {
                   </span>
                 </TableCell>
                 <TableCell>
-                  {promotion.show_on_homepage ? 'Yes' : 'No'}
+                  {promotion.display_on_homepage ? 'Yes' : 'No'}
                 </TableCell>
                 <TableCell>
-                  {promotion.start_date && format(new Date(promotion.start_date), 'MMM dd, yyyy')}
+                  <div className="text-sm">
+                    <p>{promotion.start_date && format(new Date(promotion.start_date), 'MMM dd')}</p>
+                    {promotion.end_date && (
+                      <p className="text-gray-500">to {format(new Date(promotion.end_date), 'MMM dd')}</p>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell>
-                  {promotion.end_date && format(new Date(promotion.end_date), 'MMM dd, yyyy')}
+                  <div className="text-sm">
+                    <p>{promotion.usage_count} used</p>
+                    {promotion.usage_limit && (
+                      <p className="text-gray-500">of {promotion.usage_limit}</p>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
@@ -289,21 +319,13 @@ export default function PromotionsPage() {
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-2 gap-4 py-4">
               <div className="col-span-2">
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="name">Promotion Name</Label>
                 <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g., Summer Sale 2024"
                   required
-                />
-              </div>
-              
-              <div className="col-span-2">
-                <Label htmlFor="subtitle">Subtitle</Label>
-                <Input
-                  id="subtitle"
-                  value={formData.subtitle}
-                  onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
                 />
               </div>
               
@@ -312,71 +334,88 @@ export default function PromotionsPage() {
                 <textarea
                   id="description"
                   className="w-full px-3 py-2 border rounded-md"
-                  rows={3}
+                  rows={2}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Brief description of the promotion"
                 />
               </div>
               
               <div>
-                <Label htmlFor="discount_percentage">Discount Percentage</Label>
+                <Label htmlFor="type">Promotion Type</Label>
+                <select
+                  id="type"
+                  className="w-full px-3 py-2 border rounded-md"
+                  value={formData.type}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
+                >
+                  <option value="percentage">Percentage Discount</option>
+                  <option value="fixed_amount">Fixed Amount Off</option>
+                  <option value="bogo">Buy One Get One</option>
+                  <option value="free_shipping">Free Shipping</option>
+                </select>
+              </div>
+              
+              <div>
+                <Label htmlFor="value">
+                  {formData.type === 'percentage' ? 'Percentage (%)' : 
+                   formData.type === 'fixed_amount' ? 'Amount (R)' : 'Value'}
+                </Label>
                 <Input
-                  id="discount_percentage"
+                  id="value"
                   type="number"
                   min="0"
-                  max="100"
-                  value={formData.discount_percentage}
-                  onChange={(e) => setFormData({ ...formData, discount_percentage: e.target.value })}
+                  step={formData.type === 'percentage' ? "1" : "0.01"}
+                  value={formData.value}
+                  onChange={(e) => setFormData({ ...formData, value: e.target.value })}
+                  required
                 />
               </div>
               
               <div>
-                <Label htmlFor="discount_amount">Discount Amount (R)</Label>
+                <Label htmlFor="minimum_purchase">Minimum Purchase (R)</Label>
                 <Input
-                  id="discount_amount"
+                  id="minimum_purchase"
                   type="number"
                   min="0"
                   step="0.01"
-                  value={formData.discount_amount}
-                  onChange={(e) => setFormData({ ...formData, discount_amount: e.target.value })}
+                  value={formData.minimum_purchase}
+                  onChange={(e) => setFormData({ ...formData, minimum_purchase: e.target.value })}
+                  placeholder="0 for no minimum"
                 />
               </div>
               
               <div>
-                <Label htmlFor="promo_code">Promo Code</Label>
+                <Label htmlFor="code">Promo Code</Label>
                 <Input
-                  id="promo_code"
-                  value={formData.promo_code}
-                  onChange={(e) => setFormData({ ...formData, promo_code: e.target.value })}
+                  id="code"
+                  value={formData.code}
+                  onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                  placeholder="Leave empty for auto-apply"
                 />
               </div>
               
               <div>
-                <Label htmlFor="position">Position</Label>
+                <Label htmlFor="priority">Priority</Label>
                 <Input
-                  id="position"
+                  id="priority"
                   type="number"
                   min="0"
-                  value={formData.position}
-                  onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                  value={formData.priority}
+                  onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                  placeholder="Higher number = higher priority"
                 />
               </div>
               
-              <div className="col-span-2">
-                <Label htmlFor="banner_image_url">Banner Image URL</Label>
+              <div>
+                <Label htmlFor="usage_limit">Usage Limit</Label>
                 <Input
-                  id="banner_image_url"
-                  value={formData.banner_image_url}
-                  onChange={(e) => setFormData({ ...formData, banner_image_url: e.target.value })}
-                />
-              </div>
-              
-              <div className="col-span-2">
-                <Label htmlFor="link_url">Link URL</Label>
-                <Input
-                  id="link_url"
-                  value={formData.link_url}
-                  onChange={(e) => setFormData({ ...formData, link_url: e.target.value })}
+                  id="usage_limit"
+                  type="number"
+                  min="0"
+                  value={formData.usage_limit}
+                  onChange={(e) => setFormData({ ...formData, usage_limit: e.target.value })}
+                  placeholder="Leave empty for unlimited"
                 />
               </div>
               
@@ -387,6 +426,7 @@ export default function PromotionsPage() {
                   type="date"
                   value={formData.start_date}
                   onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                  required
                 />
               </div>
               
@@ -397,7 +437,19 @@ export default function PromotionsPage() {
                   type="date"
                   value={formData.end_date}
                   onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                  placeholder="Leave empty for no end date"
                 />
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="auto_apply"
+                  checked={formData.auto_apply}
+                  onCheckedChange={(checked) => 
+                    setFormData({ ...formData, auto_apply: checked as boolean })
+                  }
+                />
+                <Label htmlFor="auto_apply">Auto Apply (no code needed)</Label>
               </div>
               
               <div className="flex items-center space-x-2">
@@ -413,13 +465,13 @@ export default function PromotionsPage() {
               
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="show_on_homepage"
-                  checked={formData.show_on_homepage}
+                  id="display_on_homepage"
+                  checked={formData.display_on_homepage}
                   onCheckedChange={(checked) => 
-                    setFormData({ ...formData, show_on_homepage: checked as boolean })
+                    setFormData({ ...formData, display_on_homepage: checked as boolean })
                   }
                 />
-                <Label htmlFor="show_on_homepage">Show on Homepage</Label>
+                <Label htmlFor="display_on_homepage">Display on Homepage</Label>
               </div>
             </div>
             

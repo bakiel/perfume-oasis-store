@@ -136,16 +136,16 @@ export default function AdminProductsPage() {
         <div className="flex gap-3 mt-4 md:mt-0">
           <Button variant="outline" size="sm">
             <Upload className="h-4 w-4 mr-2" />
-            Import
+            <span>Import</span>
           </Button>
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
-            Export
+            <span>Export</span>
           </Button>
           <Link href="/admin/products/new">
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Add Product
+              <span>Add Product</span>
             </Button>
           </Link>
         </div>
@@ -200,7 +200,7 @@ export default function AdminProductsPage() {
               variant="destructive"
               onClick={handleBulkDelete}
             >
-              Delete Selected
+              <span>Delete Selected</span>
             </Button>
           </div>
         )}
@@ -217,7 +217,7 @@ export default function AdminProductsPage() {
             <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-500">No products found</p>
             <Link href="/admin/products/new">
-              <Button className="mt-4">Add Your First Product</Button>
+              <Button className="mt-4"><span>Add Your First Product</span></Button>
             </Link>
           </div>
         ) : (

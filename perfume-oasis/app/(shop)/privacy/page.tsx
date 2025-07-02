@@ -139,7 +139,7 @@ export default function PrivacyPolicyPage() {
               <li>Withdraw consent for marketing communications</li>
             </ul>
             <p className="mt-3">
-              To exercise any of these rights, please contact us at givenmoja12@gmail.com
+              To exercise any of these rights, please contact us at info@perfumeoasis.co.za
             </p>
           </CardContent>
         </Card>
@@ -184,7 +184,7 @@ export default function PrivacyPolicyPage() {
           </p>
           <div className="space-y-2 text-sm">
             <p><strong>Torrencial (Pty) Ltd</strong></p>
-            <p>Email: givenmoja12@gmail.com</p>
+            <p>Email: info@perfumeoasis.co.za</p>
             <p>Phone: +27 82 480 1311</p>
             <p>Address: Moloto Street No 30, Bela Bela, Limpopo, 0480</p>
           </div>

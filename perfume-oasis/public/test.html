@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Static Test</title>
+  <style>
+    body { 
+      background: white; 
+      color: black; 
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    .test-box {
+      padding: 20px;
+      margin: 10px 0;
+      border: 2px solid black;
+    }
+    .bg-green { background: #0E5C4A; color: white; }
+    .bg-gold { background: #C8A95B; color: white; }
+    .bg-sand { background: #F6F3EF; color: black; }
+  </style>
+</head>
+<body>
+  <h1>Static HTML Test</h1>
+  <p>If you can see this, then basic HTML rendering works.</p>
+  
+  <div class="test-box">Normal box with white background</div>
+  <div class="test-box bg-green">Green box (Emerald Palm)</div>
+  <div class="test-box bg-gold">Gold box (Royal Gold)</div>
+  <div class="test-box bg-sand">Sand box (Soft Sand)</div>
+  
+  <script>
+    console.log('JavaScript is working');
+    document.body.insertAdjacentHTML('beforeend', '<p>JavaScript executed successfully</p>');
+  </script>
+</body>
+</html>

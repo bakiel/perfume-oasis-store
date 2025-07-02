@@ -75,22 +75,22 @@ export default function RegisterPage() {
   }
   
   return (
-    <Card className="border-0 shadow-2xl">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-display text-emerald-palm">
+    <Card className="border-0 shadow-xl md:shadow-2xl">
+      <CardHeader className="space-y-1 p-6 md:p-8">
+        <CardTitle className="text-2xl md:text-3xl lg:text-4xl font-display text-emerald-palm">
           Create an account
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-sm md:text-base">
           Join Perfume Oasis to start shopping for your favorite fragrances
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleRegister}>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <CardContent className="space-y-4 md:space-y-6 p-6 md:p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First name</Label>
+              <Label htmlFor="firstName" className="text-sm md:text-base">First name</Label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
                 <Input
                   id="firstName"
                   name="firstName"
@@ -98,15 +98,15 @@ export default function RegisterPage() {
                   placeholder="John"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="pl-10"
+                  className="pl-10 md:pl-12 h-11 md:h-12 text-sm md:text-base"
                   required
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last name</Label>
+              <Label htmlFor="lastName" className="text-sm md:text-base">Last name</Label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
                 <Input
                   id="lastName"
                   name="lastName"
@@ -114,16 +114,16 @@ export default function RegisterPage() {
                   placeholder="Doe"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="pl-10"
+                  className="pl-10 md:pl-12 h-11 md:h-12 text-sm md:text-base"
                   required
                 />
               </div>
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-sm md:text-base">Email</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
               <Input
                 id="email"
                 name="email"
@@ -131,15 +131,15 @@ export default function RegisterPage() {
                 placeholder="you@example.com"
                 value={formData.email}
                 onChange={handleChange}
-                className="pl-10"
+                className="pl-10 md:pl-12 h-11 md:h-12 text-sm md:text-base"
                 required
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-sm md:text-base">Password</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
               <Input
                 id="password"
                 name="password"
@@ -147,15 +147,15 @@ export default function RegisterPage() {
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
-                className="pl-10"
+                className="pl-10 md:pl-12 h-11 md:h-12 text-sm md:text-base"
                 required
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm password</Label>
+            <Label htmlFor="confirmPassword" className="text-sm md:text-base">Confirm password</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -163,24 +163,25 @@ export default function RegisterPage() {
                 placeholder="••••••••"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="pl-10"
+                className="pl-10 md:pl-12 h-11 md:h-12 text-sm md:text-base"
                 required
               />
             </div>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs md:text-sm text-gray-500">
             By creating an account, you agree to our Terms of Service and Privacy Policy
           </p>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
+        <CardFooter className="flex flex-col space-y-4 p-6 md:p-8">
           <Button 
             type="submit" 
-            className="w-full"
+            className="w-full h-11 md:h-12 text-sm md:text-base"
+            size="lg"
             disabled={loading}
           >
-            {loading ? "Creating account..." : "Create account"}
+            <span>{loading ? "Creating account..." : "Create account"}</span>
           </Button>
-          <p className="text-sm text-center text-gray-600">
+          <p className="text-xs md:text-sm text-center text-gray-600">
             Already have an account?{" "}
             <Link 
               href="/login" 

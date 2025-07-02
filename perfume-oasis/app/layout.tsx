@@ -31,6 +31,12 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
+        url: "/images/social/perfume-oasis-bottle-share.jpg",
+        width: 1200,
+        height: 1200,
+        alt: "Perfume Oasis - Luxury Fragrances",
+      },
+      {
         url: "/images/banners/PO-horizontal-banner-hero-emerald-gold.jpg",
         width: 1200,
         height: 630,
@@ -42,7 +48,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Perfume Oasis - Luxury Fragrances",
     description: "Refresh your senses with authentic luxury fragrances",
-    images: ["/images/banners/PO-horizontal-banner-hero-emerald-gold.jpg"],
+    images: ["/images/social/perfume-oasis-bottle-share.jpg"],
   },
   manifest: "/manifest.json",
   icons: {

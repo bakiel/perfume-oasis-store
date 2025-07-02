@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 import { format } from "date-fns"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Package, Eye, FileDown, ArrowLeft } from "lucide-react"
+import { Package, Eye, FileDown, ArrowLeft, Truck } from "lucide-react"
 
 export default async function OrdersPage() {
   const supabase = await createClient()
@@ -109,13 +109,21 @@ export default async function OrdersPage() {
                   </div>
                 </div>
                 
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Link href={`/account/orders/${order.id}`}>
                     <Button variant="outline" size="sm">
                       <Eye className="h-4 w-4 mr-2" />
                       View Details
                     </Button>
                   </Link>
+                  {(order.status === 'shipped' || order.tracking_number) && (
+                    <Link href={`/track-order?order=${order.order_number}`}>
+                      <Button variant="outline" size="sm">
+                        <Truck className="h-4 w-4 mr-2" />
+                        Track Order
+                      </Button>
+                    </Link>
+                  )}
                   {order.invoice_pdf_url && (
                     <a 
                       href={order.invoice_pdf_url}

@@ -68,15 +68,9 @@ export default async function ProductsPage({
     }
   }
   
-  // Handle gender filtering with proper capitalization
+  // Handle gender filtering (case-insensitive)
   if (searchParams.gender) {
-    if (searchParams.gender === 'women') {
-      query = query.eq('gender', 'Women')
-    } else if (searchParams.gender === 'men') {
-      query = query.eq('gender', 'Men')
-    } else if (searchParams.gender === 'unisex') {
-      query = query.eq('gender', 'Unisex')
-    }
+    query = query.ilike('gender', searchParams.gender)
   }
   
   if (searchParams.minPrice) {
@@ -156,25 +150,30 @@ export default async function ProductsPage({
   // Filter out brands with no products
   const activeBrands = brandsWithCounts.filter(brand => brand.count > 0)
   
-  // Get gender counts
+  // Get gender counts - fetch all active products for accurate counts
+  const { data: allProductsForCount } = await supabase
+    .from('products')
+    .select('id, gender')
+    .eq('is_active', true)
+  
   const genderCounts = {
     women: 0,
     men: 0,
     unisex: 0
   }
   
-  const { data: genderData } = await supabase
-    .from('products')
-    .select('gender')
-    .eq('is_active', true)
-    .not('gender', 'is', null)
-  
-  genderData?.forEach(product => {
-    const gender = product.gender
-    if (gender === 'Women') genderCounts.women++
-    else if (gender === 'Men') genderCounts.men++
-    else if (gender === 'Unisex') genderCounts.unisex++
-  })
+  if (allProductsForCount && allProductsForCount.length > 0) {
+    allProductsForCount.forEach(product => {
+      const gender = product.gender?.toLowerCase()
+      if (gender === 'women') {
+        genderCounts.women++
+      } else if (gender === 'men') {
+        genderCounts.men++
+      } else if (gender === 'unisex') {
+        genderCounts.unisex++
+      }
+    })
+  }
   
   return (
     <div className="min-h-screen bg-[#F6F3EF]">

@@ -155,6 +155,41 @@ export function ProductsClient({
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white border-b border-gray-100">
         <div className="container mx-auto px-4 py-4">
+          {/* Quick Gender Filters */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
+            <Button
+              variant={!searchParams.gender ? "default" : "outline"}
+              size="sm"
+              onClick={() => updateURL({ gender: undefined })}
+              className={!searchParams.gender ? "bg-emerald-palm" : ""}
+            >
+              <span>All</span>
+            </Button>
+            <Button
+              variant={searchParams.gender === 'women' ? "default" : "outline"}
+              size="sm"
+              onClick={() => updateURL({ gender: 'women' })}
+              className={searchParams.gender === 'women' ? "bg-emerald-palm" : ""}
+            >
+              <span>Women{genderCounts && genderCounts.women > 0 ? ` (${genderCounts.women})` : ''}</span>
+            </Button>
+            <Button
+              variant={searchParams.gender === 'men' ? "default" : "outline"}
+              size="sm"
+              onClick={() => updateURL({ gender: 'men' })}
+              className={searchParams.gender === 'men' ? "bg-emerald-palm" : ""}
+            >
+              <span>Men{genderCounts && genderCounts.men > 0 ? ` (${genderCounts.men})` : ''}</span>
+            </Button>
+            <Button
+              variant={searchParams.gender === 'unisex' ? "default" : "outline"}
+              size="sm"
+              onClick={() => updateURL({ gender: 'unisex' })}
+              className={searchParams.gender === 'unisex' ? "bg-emerald-palm" : ""}
+            >
+              <span>Unisex{genderCounts && genderCounts.unisex > 0 ? ` (${genderCounts.unisex})` : ''}</span>
+            </Button>
+          </div>
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-display text-[#0E5C4A]">
               Shop Fragrances
@@ -185,13 +220,15 @@ export function ProductsClient({
               />
             </div>
             <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
-              <SheetTrigger className="relative inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10">
-                <SlidersHorizontal className="h-4 w-4" />
-                {hasActiveFilters && (
-                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-[#0E5C4A] text-white rounded-full text-xs flex items-center justify-center">
-                    {activeFilterCount}
-                  </span>
-                )}
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="relative">
+                  <SlidersHorizontal className="h-4 w-4" />
+                  {hasActiveFilters && (
+                    <span className="absolute -top-1 -right-1 h-5 w-5 bg-[#0E5C4A] text-white rounded-full text-xs flex items-center justify-center">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <SheetHeader>
@@ -280,7 +317,7 @@ export function ProductsClient({
                           All
                         </Label>
                       </div>
-                      {genderCounts?.women > 0 && (
+                      {genderCounts && genderCounts.women > 0 && (
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="women" id="gender-women" />
                           <Label htmlFor="gender-women" className="font-normal cursor-pointer">
@@ -291,7 +328,7 @@ export function ProductsClient({
                           </Label>
                         </div>
                       )}
-                      {genderCounts?.men > 0 && (
+                      {genderCounts && genderCounts.men > 0 && (
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="men" id="gender-men" />
                           <Label htmlFor="gender-men" className="font-normal cursor-pointer">
@@ -302,7 +339,7 @@ export function ProductsClient({
                           </Label>
                         </div>
                       )}
-                      {genderCounts?.unisex > 0 && (
+                      {genderCounts && genderCounts.unisex > 0 && (
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="unisex" id="gender-unisex" />
                           <Label htmlFor="gender-unisex" className="font-normal cursor-pointer">
@@ -343,7 +380,7 @@ export function ProductsClient({
                         priceRange[1] === (searchParams.maxPrice ? parseFloat(searchParams.maxPrice) : 2000)
                       }
                     >
-                      Apply Price Filter
+                      <span>Apply Price Filter</span>
                     </Button>
                   </div>
                   
@@ -354,7 +391,7 @@ export function ProductsClient({
                       onClick={clearFilters}
                       className="w-full"
                     >
-                      Clear All Filters
+                      <span>Clear All Filters</span>
                     </Button>
                   )}
                 </div>
@@ -426,7 +463,7 @@ export function ProductsClient({
                   Try adjusting your filters or browse all products
                 </p>
                 <Button variant="outline" onClick={clearFilters}>
-                  Clear Filters
+                  <span>Clear Filters</span>
                 </Button>
               </>
             )}

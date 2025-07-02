@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useCartStore } from '@/lib/store/cart'
+import { useCartStore } from '@/hooks/use-cart'
 import { formatCurrency } from '@/lib/utils'
 import { Dialog, Transition } from '@headlessui/react'
 
@@ -16,10 +16,10 @@ export function CartSidebar() {
     toggleCart, 
     removeItem, 
     updateQuantity, 
-    getTotalPrice 
+    getTotal 
   } = useCartStore()
   
-  const totalPrice = getTotalPrice()
+  const totalPrice = getTotal()
   const shippingThreshold = 1000
   const remainingForFreeShipping = Math.max(0, shippingThreshold - totalPrice)
 
@@ -88,7 +88,7 @@ export function CartSidebar() {
                           <ShoppingBag className="h-16 w-16 text-gray-300 mb-4" />
                           <p className="text-gray-500 mb-4">Your cart is empty</p>
                           <Link href="/products" onClick={toggleCart}>
-                            <Button>Continue Shopping</Button>
+                            <Button><span>Continue Shopping</span></Button>
                           </Link>
                         </div>
                       ) : (
