@@ -31,7 +31,7 @@ export async function sendEmail({
   subject,
   html,
   text,
-  from = COMPANY_EMAILS.noreply,
+  from = COMPANY_EMAILS.orders,
   attachments = []
 }: {
   to: string | string[]

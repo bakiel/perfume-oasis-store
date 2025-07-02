@@ -23,7 +23,7 @@ export async function sendOrderConfirmationEmail({ orderId, customerEmail, custo
           product:products (
             name,
             brand:brands (name),
-            image_url
+            main_image_url
           )
         )
       `)
@@ -52,10 +52,10 @@ export async function sendOrderConfirmationEmail({ orderId, customerEmail, custo
       items: order.order_items?.map((item: any) => ({
         name: item.product?.name || 'Product',
         brand: item.product?.brand?.name || '',
-        quantity: item.quantity,
-        price: item.price,
-        total: item.total,
-        imageUrl: item.product?.image_url || '/images/placeholder.jpg'
+        quantity: item.quantity || 1,
+        price: item.price || 0,
+        subtotal: item.total || 0,
+        imageUrl: item.product?.main_image_url || '/images/placeholder.jpg'
       })) || [],
       subtotal: order.subtotal || order.total,
       delivery: order.delivery_fee || 0,
@@ -70,47 +70,61 @@ export async function sendOrderConfirmationEmail({ orderId, customerEmail, custo
       orderNumber: order.order_number,
       date: order.created_at,
       customer: {
-        name: order.customer_name,
-        email: order.customer_email,
-        phone: order.customer_phone,
+        name: order.customer_name || 'Customer',
+        email: order.customer_email || '',
+        phone: order.customer_phone || '',
         address: deliveryAddress
       },
       items: order.order_items?.map((item: any) => ({
-        name: item.product?.name || 'Product',
-        brand: item.product?.brand?.name || '',
-        quantity: item.quantity,
-        price: item.price,
-        total: item.total
+        product_name: item.product?.name || 'Product',
+        product_brand: item.product?.brand?.name || '',
+        quantity: Number(item.quantity) || 1,
+        price: Number(item.price) || 0,
+        subtotal: Number(item.total) || 0
       })) || [],
-      subtotal: order.subtotal || order.total,
-      delivery: order.delivery_fee || 0,
-      total: order.total || order.total_amount,
+      subtotal: Number(order.subtotal) || Number(order.total) || 0,
+      delivery: Number(order.delivery_fee) || 0,
+      total: Number(order.total) || Number(order.total_amount) || 0,
       paymentStatus: order.payment_status === 'paid' ? 'Paid' : 'Pending',
       paymentMethod: 'Bank Transfer',
     }
     
-    const pdfBuffer = await generateInvoicePDF(invoiceData)
+    // Generate PDF with error handling
+    let pdfBuffer: Buffer | null = null;
+    let pdfBase64: string | null = null;
     
-    // Convert PDF buffer to base64 for email attachment
-    const pdfBase64 = pdfBuffer.toString('base64')
+    try {
+      pdfBuffer = await generateInvoicePDF(invoiceData);
+      pdfBase64 = pdfBuffer.toString('base64');
+    } catch (pdfError) {
+      console.error('PDF generation failed:', pdfError);
+      // Continue without PDF attachment
+    }
     
     // Get email HTML
     const emailHtml = getOrderConfirmationTemplate(emailData)
     
     // Send email with invoice attachment
-    const result = await sendEmail({
+    const emailConfig: any = {
       to: customerEmail,
       subject: `Order Confirmation - ${order.order_number} | Perfume Oasis`,
       html: emailHtml,
-      text: `Thank you for your order ${order.order_number}. Your invoice is attached.`,
+      text: `Thank you for your order ${order.order_number}. Your order has been confirmed.`,
       from: COMPANY_EMAILS.orders,
-      attachments: [{
+      attachments: []
+    };
+    
+    // Add PDF attachment if generated successfully
+    if (pdfBase64) {
+      emailConfig.attachments.push({
         content: pdfBase64,
         filename: `invoice-${order.order_number}.pdf`,
         type: 'application/pdf',
         disposition: 'attachment'
-      }]
-    })
+      });
+    }
+    
+    const result = await sendEmail(emailConfig)
     
     if (result.success) {
       // Update order with email sent status
