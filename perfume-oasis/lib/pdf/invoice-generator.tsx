@@ -30,6 +30,13 @@ export interface InvoiceData {
   total: number;
   paymentStatus: string;
   paymentMethod: string;
+  discount?: number;
+  appliedPromotions?: Array<{
+    name: string;
+    type: string;
+    discount_amount: number;
+    code?: string;
+  }>;
 }
 
 export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
@@ -76,7 +83,15 @@ ${data.items.map(item =>
   `  Qty: ${item.quantity} × R${item.price.toFixed(2)} = R${item.subtotal.toFixed(2)}`
 ).join('\n')}
 
-SUBTOTAL: R${data.subtotal.toFixed(2)}
+SUBTOTAL: R${data.subtotal.toFixed(2)}${
+  data.appliedPromotions && data.appliedPromotions.length > 0 
+    ? '\n\nPROMOTIONS:\n' + data.appliedPromotions.map(promo => 
+        `${promo.name}${promo.code ? ` (${promo.code})` : ''}: -R${promo.discount_amount.toFixed(2)}`
+      ).join('\n')
+    : data.discount && data.discount > 0 
+      ? `\nDISCOUNT: -R${data.discount.toFixed(2)}`
+      : ''
+}
 DELIVERY: R${data.delivery.toFixed(2)}
 TOTAL: R${data.total.toFixed(2)}
 

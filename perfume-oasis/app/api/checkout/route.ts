@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { generateInvoicePDF } from '@/lib/pdf/invoice-generator'
 import { sendOrderConfirmationEmail } from '@/lib/email/order-email-service'
+import { promotionService } from '@/lib/promotions/promotion-service'
 
 // Enable guest checkout for testing
 const ENABLE_GUEST_CHECKOUT = true
@@ -9,12 +10,15 @@ const ENABLE_GUEST_CHECKOUT = true
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { customer, items, total, subtotal, delivery } = body
+    const { customer, items, total, subtotal, delivery, appliedPromotions, discount, promoCode } = body
 
     console.log('Checkout request received:', { 
       customer, 
       itemCount: items.length, 
       total,
+      discount,
+      promoCode,
+      promotionsCount: appliedPromotions?.length || 0,
       body: JSON.stringify(body, null, 2)
     })
 
@@ -109,6 +113,10 @@ export async function POST(request: NextRequest) {
         payment_method: 'bank_transfer',
         payment_status: 'pending',
         user_id: userId, // Can be null for guest checkout
+        // Promotion fields
+        applied_promotions: appliedPromotions || [],
+        discount_amount: discount || 0,
+        promo_code: promoCode || null
     }
     
     const { data: order, error: orderError } = await supabase
@@ -254,6 +262,8 @@ export async function POST(request: NextRequest) {
       total: recalculatedTotal,
       paymentStatus: 'Pending',
       paymentMethod: 'Bank Transfer',
+      discount: discount || 0,
+      appliedPromotions: appliedPromotions || []
     }
 
     try {
@@ -296,6 +306,19 @@ export async function POST(request: NextRequest) {
       console.error('Error details:', emailError.message)
       console.error('Error stack:', emailError.stack)
       // Don't fail the order - continue
+    }
+    
+    // Increment promotion usage if any promotions were applied
+    if (appliedPromotions && appliedPromotions.length > 0) {
+      try {
+        for (const promo of appliedPromotions) {
+          await promotionService.incrementPromotionUsage(promo.promotion_id)
+        }
+        console.log('Promotion usage incremented successfully')
+      } catch (promoError) {
+        console.error('Failed to increment promotion usage:', promoError)
+        // Don't fail the order - continue
+      }
     }
 
     const response: any = { 

@@ -187,6 +187,13 @@ interface InvoiceData {
   total: number
   paymentStatus: string
   paymentMethod: string
+  discount?: number
+  appliedPromotions?: Array<{
+    name: string
+    type: string
+    discount_amount: number
+    code?: string
+  }>
 }
 
 export const InvoiceDocument: React.FC<InvoiceData> = (data) => {
@@ -302,6 +309,33 @@ export const InvoiceDocument: React.FC<InvoiceData> = (data) => {
             <Text style={styles.totalLabel}>Subtotal:</Text>
             <Text style={styles.totalValue}>{formatCurrency(data.subtotal)}</Text>
           </View>
+          
+          {/* Applied Promotions */}
+          {data.appliedPromotions && data.appliedPromotions.length > 0 && (
+            <>
+              {data.appliedPromotions.map((promo, index) => (
+                <View key={index} style={styles.totalRow}>
+                  <Text style={[styles.totalLabel, { color: '#0E5C4A' }]}>
+                    {promo.name} {promo.code ? `(${promo.code})` : ''}:
+                  </Text>
+                  <Text style={[styles.totalValue, { color: '#0E5C4A' }]}>
+                    - {formatCurrency(promo.discount_amount)}
+                  </Text>
+                </View>
+              ))}
+            </>
+          )}
+          
+          {/* Or show single discount line if no promotion details */}
+          {(!data.appliedPromotions || data.appliedPromotions.length === 0) && data.discount && data.discount > 0 && (
+            <View style={styles.totalRow}>
+              <Text style={[styles.totalLabel, { color: '#0E5C4A' }]}>Discount:</Text>
+              <Text style={[styles.totalValue, { color: '#0E5C4A' }]}>
+                - {formatCurrency(data.discount)}
+              </Text>
+            </View>
+          )}
+          
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Delivery:</Text>
             <Text style={styles.totalValue}>

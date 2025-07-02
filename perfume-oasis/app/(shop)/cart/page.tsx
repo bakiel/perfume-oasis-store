@@ -3,19 +3,48 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react"
+import { Minus, Plus, Trash2, ShoppingBag, Tag, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useCartStore } from "@/hooks/use-cart"
 import { formatCurrency } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
+import { promotionService } from "@/lib/promotions/promotion-service"
+import toast from "react-hot-toast"
 
 export default function CartPage() {
   const [isMounted, setIsMounted] = useState(false)
-  const { items, removeItem, updateQuantity, getTotal } = useCartStore()
+  const [promoInput, setPromoInput] = useState("")
+  const [isApplyingPromo, setIsApplyingPromo] = useState(false)
+  const { 
+    items, 
+    removeItem, 
+    updateQuantity, 
+    getTotal, 
+    getSubtotal,
+    promoCode,
+    appliedPromotions,
+    discount,
+    freeShipping,
+    setPromoCode,
+    setPromotions,
+    clearPromotions
+  } = useCartStore()
   
   useEffect(() => {
     setIsMounted(true)
+    // Apply auto-apply promotions on mount
+    applyAutoPromotions()
   }, [])
+  
+  useEffect(() => {
+    // Re-apply promotions when cart items change
+    if (items.length > 0) {
+      applyPromotions(promoCode)
+    } else {
+      clearPromotions()
+    }
+  }, [items])
 
   if (!isMounted) {
     return (
@@ -25,8 +54,71 @@ export default function CartPage() {
     )
   }
 
+  const subtotal = getSubtotal()
   const total = getTotal()
-  const deliveryFee = total > 1000 ? 0 : 150
+  const deliveryFee = (freeShipping || total > 1000) ? 0 : 150
+  
+  const applyAutoPromotions = async () => {
+    if (items.length === 0) return
+    
+    try {
+      const result = await promotionService.applyPromotionsToCart(
+        items,
+        subtotal,
+        undefined
+      )
+      
+      if (result.appliedPromotions.length > 0) {
+        setPromotions(result.appliedPromotions, result.totalDiscount, result.freeShipping)
+      }
+    } catch (error) {
+      console.error('Error applying auto promotions:', error)
+    }
+  }
+  
+  const applyPromotions = async (code: string | null) => {
+    if (items.length === 0) return
+    
+    try {
+      const result = await promotionService.applyPromotionsToCart(
+        items,
+        subtotal,
+        code || undefined
+      )
+      
+      setPromotions(result.appliedPromotions, result.totalDiscount, result.freeShipping)
+    } catch (error) {
+      console.error('Error applying promotions:', error)
+    }
+  }
+  
+  const handleApplyPromo = async () => {
+    if (!promoInput.trim()) return
+    
+    setIsApplyingPromo(true)
+    try {
+      const result = await promotionService.applyPromotionsToCart(
+        items,
+        subtotal,
+        promoInput
+      )
+      
+      setPromoCode(promoInput)
+      setPromotions(result.appliedPromotions, result.totalDiscount, result.freeShipping)
+      toast.success('Promo code applied successfully!')
+      setPromoInput('')
+    } catch (error: any) {
+      toast.error(error.message || 'Invalid promo code')
+    } finally {
+      setIsApplyingPromo(false)
+    }
+  }
+  
+  const handleRemovePromo = () => {
+    setPromoCode(null)
+    applyAutoPromotions() // Re-apply only auto promotions
+    toast.success('Promo code removed')
+  }
 
   if (items.length === 0) {
     return (
@@ -154,8 +246,70 @@ export default function CartPage() {
             <div className="space-y-3">
               <div className="flex justify-between text-sm md:text-base">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">{formatCurrency(total)}</span>
+                <span className="font-medium">{formatCurrency(subtotal)}</span>
               </div>
+              
+              {/* Promo Code Input */}
+              {!promoCode && (
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Enter promo code"
+                      value={promoInput}
+                      onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                      onKeyPress={(e) => e.key === 'Enter' && handleApplyPromo()}
+                      className="flex-1"
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleApplyPromo}
+                      disabled={!promoInput.trim() || isApplyingPromo}
+                    >
+                      {isApplyingPromo ? 'Applying...' : 'Apply'}
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
+              {/* Applied Promotions */}
+              {appliedPromotions.length > 0 && (
+                <div className="space-y-2 bg-green-50 p-3 rounded-lg">
+                  {appliedPromotions.map((promo) => (
+                    <div key={promo.promotion_id} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <Tag className="h-4 w-4 text-green-600" />
+                        <span className="text-green-800">{promo.name}</span>
+                        {promo.code && (
+                          <span className="text-xs text-green-600">({promo.code})</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-green-800">
+                          -{formatCurrency(promo.discount_amount)}
+                        </span>
+                        {promo.code && (
+                          <button
+                            onClick={handleRemovePromo}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  {freeShipping && !appliedPromotions.find(p => p.type === 'free_shipping') && (
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <Tag className="h-4 w-4 text-green-600" />
+                        <span className="text-green-800">Free Shipping</span>
+                      </div>
+                      <span className="font-medium text-green-800">Applied</span>
+                    </div>
+                  )}
+                </div>
+              )}
               <div className="flex justify-between text-sm md:text-base">
                 <span className="text-gray-600">Delivery</span>
                 <span className={`font-medium ${deliveryFee === 0 ? "text-green-600" : ""}`}>

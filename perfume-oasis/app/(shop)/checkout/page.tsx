@@ -87,7 +87,17 @@ export default function CheckoutPage() {
   const [user, setUser] = useState<any>(null)
   const [validatingCart, setValidatingCart] = useState(true)
   const [invalidItems, setInvalidItems] = useState<string[]>([])
-  const { items, getTotal, clearCart, removeItem } = useCartStore()
+  const { 
+    items, 
+    getTotal, 
+    getSubtotal,
+    clearCart, 
+    removeItem,
+    appliedPromotions,
+    discount,
+    promoCode,
+    freeShipping
+  } = useCartStore()
   
   // All hooks must be called before any conditional returns
   const {
@@ -185,8 +195,9 @@ export default function CheckoutPage() {
     )
   }
 
+  const subtotal = getSubtotal()
   const total = getTotal()
-  const deliveryFee = total > 1000 ? 0 : 150
+  const deliveryFee = (freeShipping || total > 1000) ? 0 : 150
 
   // Redirect if cart is empty
   if (items.length === 0) {
@@ -224,9 +235,13 @@ export default function CheckoutPage() {
             price: item.price,
             quantity: item.quantity,
           })),
-          subtotal: total,
+          subtotal: subtotal,
           delivery: deliveryFee,
           total: total + deliveryFee,
+          // Include promotion data
+          appliedPromotions: appliedPromotions,
+          discount: discount,
+          promoCode: promoCode
         }),
       })
 
@@ -707,8 +722,25 @@ export default function CheckoutPage() {
               <div className="border-t pt-4 space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
-                  <span>{formatCurrency(total)}</span>
+                  <span>{formatCurrency(subtotal)}</span>
                 </div>
+                
+                {/* Show applied promotions */}
+                {appliedPromotions && appliedPromotions.length > 0 && (
+                  <>
+                    {appliedPromotions.map((promo, index) => (
+                      <div key={index} className="flex justify-between text-sm">
+                        <span className="text-[#0E5C4A]">
+                          {promo.name} {promo.code ? `(${promo.code})` : ''}
+                        </span>
+                        <span className="text-[#0E5C4A]">
+                          -{formatCurrency(promo.discount_amount)}
+                        </span>
+                      </div>
+                    ))}
+                  </>
+                )}
+                
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Delivery</span>
                   <span className={deliveryFee === 0 ? "text-green-600 font-medium" : ""}>
@@ -717,7 +749,7 @@ export default function CheckoutPage() {
                 </div>
                 {deliveryFee > 0 && (
                   <p className="text-xs text-gray-500">
-                    Free delivery on orders over R500
+                    Free delivery on orders over R1,000
                   </p>
                 )}
                 <div className="flex justify-between font-bold text-lg pt-3 border-t">
