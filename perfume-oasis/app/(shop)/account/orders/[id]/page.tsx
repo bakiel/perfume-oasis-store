@@ -114,14 +114,14 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                     )}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-medium">{item.product_name}</h4>
+                    <h4 className="font-medium">{item.product?.name || 'Product'}</h4>
                     <p className="text-sm text-gray-600">
-                      {item.product_brand} • {item.product?.size || 'Standard Size'}
+                      {item.product?.brand?.name || 'Brand'} • {item.product?.size || 'Standard Size'}
                     </p>
                     <div className="flex items-center gap-4 mt-1 text-sm">
                       <span>Qty: {item.quantity}</span>
-                      <span>R{item.price.toFixed(2)} each</span>
-                      <span className="font-medium">R{item.subtotal.toFixed(2)}</span>
+                      <span>R{(item.price || 0).toFixed(2)} each</span>
+                      <span className="font-medium">R{(item.total || item.price * item.quantity || 0).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -151,9 +151,18 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
               <div>
                 <span className="text-gray-600">Address:</span>{' '}
                 <div className="font-medium mt-1">
-                  {order.delivery_address.street}<br />
-                  {order.delivery_address.suburb}, {order.delivery_address.city}<br />
-                  {order.delivery_address.province}, {order.delivery_address.postal_code}
+                  {(() => {
+                    const address = typeof order.delivery_address === 'string' 
+                      ? JSON.parse(order.delivery_address) 
+                      : order.delivery_address;
+                    return (
+                      <>
+                        {address?.street || 'N/A'}<br />
+                        {address?.suburb || ''}{address?.suburb && address?.city ? ', ' : ''}{address?.city || ''}<br />
+                        {address?.province || ''}{address?.province && address?.postalCode ? ', ' : ''}{address?.postalCode || ''}
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
@@ -168,17 +177,17 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
             <div className="space-y-2">
               <div className="flex justify-between py-2">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">R{order.subtotal.toFixed(2)}</span>
+                <span className="font-medium">R{(order.subtotal || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between py-2">
                 <span className="text-gray-600">Delivery</span>
                 <span className="font-medium">
-                  {order.delivery === 0 ? 'FREE' : `R${order.delivery.toFixed(2)}`}
+                  {(order.delivery_fee || 0) === 0 ? 'FREE' : `R${(order.delivery_fee || 0).toFixed(2)}`}
                 </span>
               </div>
               <div className="flex justify-between py-2 pt-4 border-t font-medium text-lg">
                 <span>Total</span>
-                <span className="text-emerald-palm">R{order.total.toFixed(2)}</span>
+                <span className="text-emerald-palm">R{(order.total || order.total_amount || 0).toFixed(2)}</span>
               </div>
             </div>
             
