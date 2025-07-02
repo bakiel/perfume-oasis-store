@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { AppliedPromotion } from '@/lib/promotions/promotion-service'
+import { AppliedPromotion } from '@/lib/promotions/promotion-service-client'
 
 export interface CartItem {
   id: string

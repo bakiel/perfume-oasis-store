@@ -45,12 +45,12 @@ export default function CartPage() {
   
   useEffect(() => {
     // Re-apply promotions when cart items change
-    if (items.length > 0) {
+    if (isMounted && items.length > 0) {
       applyPromotions(promoCode)
-    } else {
+    } else if (isMounted) {
       clearPromotions()
     }
-  }, [items])
+  }, [items, isMounted])
 
   if (!isMounted) {
     return (
@@ -68,6 +68,12 @@ export default function CartPage() {
     if (items.length === 0) return
     
     try {
+      // Check if promotionService is available
+      if (!promotionService || typeof promotionService.applyPromotionsToCart !== 'function') {
+        console.warn('Promotion service not available')
+        return
+      }
+      
       // Map cart items to ensure product_id is set
       const mappedItems = items.map(item => ({
         id: item.id,
@@ -83,11 +89,12 @@ export default function CartPage() {
         undefined
       )
       
-      if (result.appliedPromotions.length > 0) {
+      if (result && result.appliedPromotions && result.appliedPromotions.length > 0) {
         setPromotions(result.appliedPromotions, result.totalDiscount, result.freeShipping)
       }
     } catch (error) {
       console.error('Error applying auto promotions:', error)
+      // Don't throw, just log the error
     }
   }
   
@@ -95,6 +102,12 @@ export default function CartPage() {
     if (items.length === 0) return
     
     try {
+      // Check if promotionService is available
+      if (!promotionService || typeof promotionService.applyPromotionsToCart !== 'function') {
+        console.warn('Promotion service not available')
+        return
+      }
+      
       // Map cart items to ensure product_id is set
       const mappedItems = items.map(item => ({
         id: item.id,
@@ -110,9 +123,12 @@ export default function CartPage() {
         code || undefined
       )
       
-      setPromotions(result.appliedPromotions, result.totalDiscount, result.freeShipping)
+      if (result) {
+        setPromotions(result.appliedPromotions || [], result.totalDiscount || 0, result.freeShipping || false)
+      }
     } catch (error) {
       console.error('Error applying promotions:', error)
+      // Don't throw, just log the error
     }
   }
   
@@ -121,6 +137,12 @@ export default function CartPage() {
     
     setIsApplyingPromo(true)
     try {
+      // Check if promotionService is available
+      if (!promotionService || typeof promotionService.applyPromotionsToCart !== 'function') {
+        toast.error('Promotion service not available')
+        return
+      }
+      
       // Map cart items to ensure product_id is set
       const mappedItems = items.map(item => ({
         id: item.id,
@@ -136,12 +158,14 @@ export default function CartPage() {
         promoInput
       )
       
-      setPromoCode(promoInput)
-      setPromotions(result.appliedPromotions, result.totalDiscount, result.freeShipping)
-      toast.success('Promo code applied successfully!')
-      setPromoInput('')
+      if (result) {
+        setPromoCode(promoInput)
+        setPromotions(result.appliedPromotions || [], result.totalDiscount || 0, result.freeShipping || false)
+        toast.success('Promo code applied successfully!')
+        setPromoInput('')
+      }
     } catch (error: any) {
-      toast.error(error.message || 'Invalid promo code')
+      toast.error(error?.message || 'Invalid promo code')
     } finally {
       setIsApplyingPromo(false)
     }
