@@ -52,10 +52,10 @@ export default function AuthLayout({
           </div>
           
           {/* Decorative element */}
-          <div className="mt-16 relative h-64 opacity-20">
+          <div className="mt-16 relative h-64 opacity-10">
             <Image
-              src="/images/bottle-silhouette.png"
-              alt="Perfume bottle"
+              src="/images/logos/Perfume Oasis Icon.png"
+              alt="Perfume Oasis"
               fill
               className="object-contain"
             />
