@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "import-products": "tsx scripts/import-products.ts",
-    "import-sample": "tsx scripts/import-sample-products.ts"
+    "import-sample": "tsx scripts/import-sample-products.ts",
+    "check-db": "node scripts/check-database-setup.js",
+    "migrate": "bash scripts/run-migrations.sh",
+    "db:setup": "echo 'Please run the SQL script in scripts/complete-database-setup.sql in your Supabase SQL Editor'"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.19",
