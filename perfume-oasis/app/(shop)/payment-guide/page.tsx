@@ -310,7 +310,7 @@ export default function PaymentGuidePage() {
                         • Order packed with care<br />
                         • Shipped via trusted courier<br />
                         • Tracking number provided<br />
-                        • Delivery in 2-3 business days
+                        • Delivery in 3-7 working days
                       </p>
                     </div>
                   )}

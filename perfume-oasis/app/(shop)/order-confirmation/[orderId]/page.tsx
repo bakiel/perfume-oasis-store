@@ -89,7 +89,7 @@ export default async function OrderConfirmationPage({
               <div>
                 <p className="font-medium">Estimated Delivery</p>
                 <p className="text-sm text-gray-600">
-                  2-3 business days to {deliveryAddress?.city}, {deliveryAddress?.province}
+                  3-7 working days to {deliveryAddress?.city}, {deliveryAddress?.province}
                 </p>
               </div>
             </div>

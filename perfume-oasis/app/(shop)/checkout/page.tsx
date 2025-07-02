@@ -561,7 +561,7 @@ export default function CheckoutPage() {
                   
                   <div className="bg-[#0E5C4A]/10 p-4 rounded-lg">
                     <p className="text-sm text-[#0E5C4A] font-medium">
-                      🚚 Estimated Delivery: 2-3 business days
+                      🚚 Estimated Delivery: 3-7 working days
                     </p>
                     <p className="text-xs text-gray-600 mt-1">
                       We deliver nationwide across South Africa
