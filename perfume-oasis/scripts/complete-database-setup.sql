@@ -1,11 +1,14 @@
 -- Complete Database Setup for Perfume Oasis
 -- Run this script in Supabase SQL Editor to set up all required database objects
 
--- 1. Add promotion fields to orders table (if not exists)
+-- 1. Add promotion and payment fields to orders table (if not exists)
 ALTER TABLE orders 
 ADD COLUMN IF NOT EXISTS applied_promotions JSONB DEFAULT '[]',
 ADD COLUMN IF NOT EXISTS discount_amount DECIMAL(10, 2) DEFAULT 0,
-ADD COLUMN IF NOT EXISTS promo_code TEXT;
+ADD COLUMN IF NOT EXISTS promo_code TEXT,
+ADD COLUMN IF NOT EXISTS payment_reference TEXT,
+ADD COLUMN IF NOT EXISTS paid_at TIMESTAMP WITH TIME ZONE,
+ADD COLUMN IF NOT EXISTS admin_notes TEXT;
 
 -- Create index for promo code lookups
 CREATE INDEX IF NOT EXISTS idx_orders_promo_code ON orders(promo_code);
@@ -50,7 +53,25 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 4. Create email_logs table for tracking emails
+-- 4. Create payment_confirmations table for tracking payment verifications
+CREATE TABLE IF NOT EXISTS payment_confirmations (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    order_id UUID REFERENCES orders(id) NOT NULL,
+    reference_number TEXT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    payment_date DATE NOT NULL,
+    bank_name TEXT,
+    notes TEXT,
+    confirmed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    confirmed_by UUID REFERENCES auth.users(id),
+    proof_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create index for order lookups
+CREATE INDEX IF NOT EXISTS idx_payment_confirmations_order_id ON payment_confirmations(order_id);
+
+-- 5. Create email_logs table for tracking emails
 CREATE TABLE IF NOT EXISTS email_logs (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     order_id UUID REFERENCES orders(id),
