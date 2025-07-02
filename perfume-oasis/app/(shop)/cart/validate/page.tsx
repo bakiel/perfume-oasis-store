@@ -6,7 +6,7 @@ import { AlertCircle, CheckCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useCartStore } from "@/hooks/use-cart"
-import { supabase } from "@/lib/supabase/client"
+import { createClient } from "@/lib/supabase/client"
 
 export default function ValidateCartPage() {
   const router = useRouter()
@@ -23,6 +23,8 @@ export default function ValidateCartPage() {
     setValidating(true)
     const invalid: string[] = []
     const changes: typeof priceChanges = []
+    
+    const supabase = createClient()
     
     for (const item of items) {
       const { data: product } = await supabase
