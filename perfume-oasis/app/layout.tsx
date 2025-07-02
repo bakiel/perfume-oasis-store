@@ -101,14 +101,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/images/logos/Perfume Oasis Icon.png" />
       </head>
       <body className="min-h-screen flex flex-col bg-sand-50">
-        <StoreHeader />
-        <main className="flex-1">
-          {children}
-        </main>
-        <StoreFooter />
-        <div className="h-20 lg:hidden" /> {/* Spacer for bottom nav on mobile only */}
-        <BottomNav />
-        <MobileStoryAd />
+        {children}
         <Toaster
           position="top-center"
           toastOptions={{

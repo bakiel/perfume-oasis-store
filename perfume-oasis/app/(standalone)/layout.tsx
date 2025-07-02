@@ -1,9 +1,7 @@
 import { StoreHeader } from "@/components/store/header";
 import { StoreFooter } from "@/components/store/footer";
-import { BottomNav } from "@/components/mobile/bottom-nav";
-import { MobileStoryAd } from "@/components/shop/mobile-story-ad";
 
-export default function ShopLayout({
+export default function StandaloneLayout({
   children,
 }: {
   children: React.ReactNode
@@ -15,9 +13,6 @@ export default function ShopLayout({
         {children}
       </main>
       <StoreFooter />
-      <div className="h-20 lg:hidden" /> {/* Spacer for bottom nav on mobile only */}
-      <BottomNav />
-      <MobileStoryAd />
     </>
   )
 }

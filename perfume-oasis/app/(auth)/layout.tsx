@@ -1,5 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
+import { StoreHeader } from "@/components/store/header";
+import { StoreFooter } from "@/components/store/footer";
 
 export default function AuthLayout({
   children,
@@ -7,7 +9,9 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-soft-sand lg:grid lg:grid-cols-2">
+    <>
+      <StoreHeader />
+      <div className="min-h-screen bg-soft-sand lg:grid lg:grid-cols-2">
       {/* Left side - Form */}
       <div className="flex items-center justify-center p-4 md:p-8 lg:p-12">
         <div className="w-full max-w-md lg:max-w-lg">
@@ -63,5 +67,7 @@ export default function AuthLayout({
         </div>
       </div>
     </div>
+    <StoreFooter />
+    </>
   )
 }

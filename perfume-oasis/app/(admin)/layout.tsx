@@ -23,7 +23,7 @@ export default async function AdminLayout({
     .single()
 
   if (!profile || (profile.role !== 'admin' && profile.role !== 'staff')) {
-    redirect('/unauthorized')
+    redirect('/(standalone)/unauthorized')
   }
 
   return (
