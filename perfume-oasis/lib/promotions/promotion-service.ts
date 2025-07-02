@@ -1,5 +1,8 @@
 import { createClient } from '@/lib/supabase/client'
 
+// Check if we're in the browser
+const isBrowser = typeof window !== 'undefined'
+
 export interface Promotion {
   id: string
   name: string
@@ -40,7 +43,7 @@ export interface AppliedPromotion {
 }
 
 export class PromotionService {
-  private supabase = createClient()
+  private supabase = isBrowser ? createClient() : null
 
   /**
    * Get all active promotions that can be auto-applied

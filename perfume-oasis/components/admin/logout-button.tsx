@@ -15,6 +15,13 @@ export function LogoutButton() {
     setIsLoading(true)
     try {
       const supabase = createClient()
+      
+      // Clear local storage first
+      if (typeof window !== 'undefined') {
+        localStorage.clear()
+        sessionStorage.clear()
+      }
+      
       const { error } = await supabase.auth.signOut()
       
       if (error) {
@@ -22,12 +29,12 @@ export function LogoutButton() {
       }
       
       toast.success('Logged out successfully')
-      router.push('/login')
-      router.refresh()
+      
+      // Force a hard refresh to clear all state
+      window.location.href = '/login'
     } catch (error: any) {
       console.error('Logout error:', error)
       toast.error('Failed to logout')
-    } finally {
       setIsLoading(false)
     }
   }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { generateInvoicePDF } from '@/lib/pdf/invoice-generator'
 import { sendOrderConfirmationEmail } from '@/lib/email/order-email-service'
-import { promotionService } from '@/lib/promotions/promotion-service'
+import { promotionService } from '@/lib/promotions/promotion-service-client'
 
 // Enable guest checkout for testing
 const ENABLE_GUEST_CHECKOUT = true

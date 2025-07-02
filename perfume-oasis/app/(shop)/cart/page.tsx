@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input"
 import { useCartStore } from "@/hooks/use-cart"
 import { formatCurrency } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
-import { promotionService } from "@/lib/promotions/promotion-service"
+import { promotionService } from "@/lib/promotions/promotion-service-client"
+import { Loader2 } from "lucide-react"
 import toast from "react-hot-toast"
 
 export default function CartPage() {
@@ -33,9 +34,14 @@ export default function CartPage() {
   
   useEffect(() => {
     setIsMounted(true)
-    // Apply auto-apply promotions on mount
-    applyAutoPromotions()
   }, [])
+  
+  useEffect(() => {
+    // Apply auto-apply promotions only after mount
+    if (isMounted && items.length > 0) {
+      applyAutoPromotions()
+    }
+  }, [isMounted])
   
   useEffect(() => {
     // Re-apply promotions when cart items change
