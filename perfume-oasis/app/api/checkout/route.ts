@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { generateInvoicePDF } from '@/lib/pdf/invoice-generator'
-import { sendOrderConfirmation } from '@/lib/email/order-confirmation'
-import { COMPANY_EMAILS } from '@/lib/config/emails'
+import { sendOrderConfirmationEmail } from '@/lib/email/order-email-service'
 
 // Enable guest checkout for testing
 const ENABLE_GUEST_CHECKOUT = true
@@ -278,45 +277,19 @@ export async function POST(request: NextRequest) {
         console.error('Invoice record creation failed:', invoiceError)
       }
 
-      // Send order confirmation email with invoice
-      await sendOrderConfirmation({
-        to: customer.email,
-        customerName: `${customer.firstName} ${customer.lastName}`,
-        orderNumber,
-        invoiceNumber,
-        items: validItems,
-        subtotal: recalculatedSubtotal,
-        delivery: delivery || 0,
-        total: recalculatedTotal,
-        deliveryAddress: {
-          street: customer.street,
-          suburb: customer.suburb,
-          city: customer.city,
-          province: customer.province,
-          postalCode: customer.postalCode,
-        },
-        invoiceBuffer: pdfBuffer,
+      // Send order confirmation email with invoice using new SendGrid service
+      console.log('Sending order confirmation email...')
+      const emailResult = await sendOrderConfirmationEmail({
+        orderId: order.id,
+        customerEmail: customer.email,
+        customerName: `${customer.firstName} ${customer.lastName}`
       })
-
-      // Send copy to orders email
-      await sendOrderConfirmation({
-        to: COMPANY_EMAILS.orders,
-        customerName: `${customer.firstName} ${customer.lastName}`,
-        orderNumber,
-        invoiceNumber,
-        items: validItems,
-        subtotal: recalculatedSubtotal,
-        delivery: delivery || 0,
-        total: recalculatedTotal,
-        deliveryAddress: {
-          street: customer.street,
-          suburb: customer.suburb,
-          city: customer.city,
-          province: customer.province,
-          postalCode: customer.postalCode,
-        },
-        invoiceBuffer: pdfBuffer,
-      })
+      
+      if (emailResult.success) {
+        console.log('Order confirmation email sent successfully')
+      } else {
+        console.error('Failed to send order confirmation email:', emailResult.error)
+      }
 
     } catch (emailError: any) {
       console.error('Email/Invoice generation failed:', emailError)

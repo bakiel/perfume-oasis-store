@@ -205,34 +205,17 @@ export const InvoiceDocument: React.FC<InvoiceData> = (data) => {
             <View style={{ flex: 1 }}>
               {/* Logo */}
               <View style={{ marginBottom: 10 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                  {/* Logo Mark */}
-                  <View style={{ 
-                    width: 30, 
-                    height: 30, 
-                    backgroundColor: '#0E5C4A', 
-                    borderRadius: 15,
-                    marginRight: 8,
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}>
-                    <Text style={{ color: '#C8A95B', fontSize: 16, fontWeight: 'bold' }}>PO</Text>
-                  </View>
-                  {/* Company Name */}
-                  <View>
-                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#0E5C4A', letterSpacing: 0.5 }}>
-                      PERFUME OASIS
-                    </Text>
-                    <Text style={{ fontSize: 8, color: '#C8A95B', marginTop: -2 }}>
-                      Premium Fragrances
-                    </Text>
-                  </View>
-                </View>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#0E5C4A', letterSpacing: 0.5 }}>
+                  PERFUME OASIS
+                </Text>
+                <Text style={{ fontSize: 9, color: '#C8A95B', marginTop: -2 }}>
+                  Premium Fragrances
+                </Text>
               </View>
               <Text style={styles.companyInfo}>
                 Trading as: Perfume Oasis{'\n'}
                 Torrencial (Pty) Ltd{'\n'}
-                Company Reg: 2024/123456/07
+                Company Reg: 2025/213013/07
               </Text>
             </View>
             <View style={{ flex: 1, alignItems: 'center' }}>

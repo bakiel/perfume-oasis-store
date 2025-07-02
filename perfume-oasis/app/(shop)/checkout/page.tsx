@@ -602,10 +602,34 @@ export default function CheckoutPage() {
                     
                     <div className="bg-[#0E5C4A]/10 p-4 rounded-lg">
                       <p className="font-medium text-[#0E5C4A] mb-2">Bank Transfer</p>
-                      <p className="text-sm text-gray-700">
+                      <p className="text-sm text-gray-700 mb-4">
                         After placing your order, you'll receive an invoice via email with our bank details. 
                         Please use your order number as the payment reference.
                       </p>
+                      
+                      {/* Banking Details */}
+                      <div className="bg-white rounded-lg p-4 mt-3 space-y-2">
+                        <h4 className="font-medium text-sm text-gray-900 mb-3">Banking Details</h4>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <p className="text-gray-600">Bank:</p>
+                          <p className="font-medium">Nedbank</p>
+                          
+                          <p className="text-gray-600">Account Name:</p>
+                          <p className="font-medium">Torrencial</p>
+                          
+                          <p className="text-gray-600">Account Number:</p>
+                          <p className="font-medium">1313614866</p>
+                          
+                          <p className="text-gray-600">Branch Code:</p>
+                          <p className="font-medium">198765</p>
+                          
+                          <p className="text-gray-600">Reference:</p>
+                          <p className="font-medium text-[#0E5C4A]">Your Order Number</p>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-3 pt-3 border-t">
+                          Please email proof of payment to: orders@perfumeoasis.co.za
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -693,7 +717,7 @@ export default function CheckoutPage() {
                 </div>
                 {deliveryFee > 0 && (
                   <p className="text-xs text-gray-500">
-                    Free delivery on orders over R1,000
+                    Free delivery on orders over R500
                   </p>
                 )}
                 <div className="flex justify-between font-bold text-lg pt-3 border-t">

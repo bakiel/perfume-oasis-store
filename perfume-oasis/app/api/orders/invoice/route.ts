@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { generateInvoicePDF } from '@/lib/pdf/invoice'
+import { generateInvoicePDF } from '@/lib/pdf/invoice-generator'
 
 export const dynamic = 'force-dynamic'
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { generateInvoicePDF } from '@/lib/pdf/invoice'
+import { generateInvoicePDF } from '@/lib/pdf/invoice-generator'
 
 export async function POST(request: NextRequest) {
   try {

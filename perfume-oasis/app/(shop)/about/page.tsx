@@ -123,13 +123,14 @@ export default function AboutPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="relative rounded-lg overflow-hidden">
+        <section className="relative rounded-lg overflow-hidden min-h-[400px]">
           <Image
-            src="/images/backgrounds/forest-scene-2.jpg"
+            src="/images/backgrounds/forest-cta-2.jpg"
             alt="Enchanted forest background"
             fill
             className="object-cover"
             quality={90}
+            priority
           />
           <div className="absolute inset-0 bg-emerald-900/70 backdrop-blur-sm" />
           <div className="relative z-10 p-8 text-center">

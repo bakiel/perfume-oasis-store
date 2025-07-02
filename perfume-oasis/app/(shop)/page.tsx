@@ -168,6 +168,38 @@ export default async function HomePage() {
         </section>
       )}
 
+      {/* Forest Banner */}
+      <section className="relative h-[400px] overflow-hidden">
+        <Image 
+          src="/images/backgrounds/forest-cta-2.jpg"
+          alt="Luxury fragrances"
+          fill
+          className="object-cover"
+          quality={100}
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50" />
+        
+        <div className="relative h-full container mx-auto px-4 flex items-center">
+          <div className="max-w-2xl text-white">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Authentic Luxury Fragrances
+            </h2>
+            <p className="text-lg md:text-xl text-white/90 mb-6">
+              100% genuine products from world-renowned brands, delivered right to your door
+            </p>
+            <Link href="/brands">
+              <Button 
+                size="lg" 
+                className="bg-white hover:bg-gray-100 text-emerald-900 font-semibold"
+              >
+                Explore Our Brands
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Categories Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
@@ -224,7 +256,50 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Call to Action */}
+      {/* Forest Call to Action */}
+      <section className="relative py-24 overflow-hidden min-h-[500px]">
+        <Image 
+          src="/images/backgrounds/forest-cta.jpg"
+          alt="Natural luxury"
+          fill
+          className="object-cover"
+          quality={100}
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/80 to-emerald-900/60" />
+        
+        <div className="relative container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center text-white">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+              Discover Nature's Finest Essences
+            </h2>
+            <p className="text-lg md:text-xl text-white/90 mb-8">
+              From fresh florals to deep woods, find your signature scent in our carefully curated collection
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/products?gender=women">
+                <Button 
+                  size="lg" 
+                  className="bg-gold-400 hover:bg-gold-500 text-emerald-900 font-semibold"
+                >
+                  Shop Women's
+                </Button>
+              </Link>
+              <Link href="/products?gender=men">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-white text-white hover:bg-white/10"
+                >
+                  Shop Men's
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final Call to Action */}
       <section className="py-16 bg-emerald-palm">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">

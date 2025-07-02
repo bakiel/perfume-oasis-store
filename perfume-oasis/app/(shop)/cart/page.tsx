@@ -26,7 +26,7 @@ export default function CartPage() {
   }
 
   const total = getTotal()
-  const deliveryFee = total > 500 ? 0 : 60
+  const deliveryFee = total > 1000 ? 0 : 150
 
   if (items.length === 0) {
     return (
