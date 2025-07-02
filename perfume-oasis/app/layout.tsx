@@ -1,10 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import { StoreHeader } from "@/components/store/header";
-import { StoreFooter } from "@/components/store/footer";
-import { BottomNav } from "@/components/mobile/bottom-nav";
-import { MobileStoryAd } from "@/components/shop/mobile-story-ad";
 
 export const metadata: Metadata = {
   title: "Perfume Oasis - Luxury Fragrances | South Africa",

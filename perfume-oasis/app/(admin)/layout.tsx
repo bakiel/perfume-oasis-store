@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 
-export default async function AdminLayout({
+export default async function AdminRootLayout({
   children,
 }: {
   children: React.ReactNode
@@ -23,12 +23,10 @@ export default async function AdminLayout({
     .single()
 
   if (!profile || (profile.role !== 'admin' && profile.role !== 'staff')) {
-    redirect('/(standalone)/unauthorized')
+    redirect('/unauthorized')
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {children}
-    </div>
-  )
+  // Return children directly without any wrapper
+  // This ensures admin routes don't inherit any shop layouts
+  return <>{children}</>
 }
