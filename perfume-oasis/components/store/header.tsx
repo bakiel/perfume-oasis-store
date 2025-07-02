@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -11,8 +11,10 @@ import {
   Menu, 
   X,
   Heart,
-  ChevronDown
+  ChevronDown,
+  Shield
 } from 'lucide-react'
+import { createBrowserClient } from '@supabase/ssr'
 import { Button } from '@/components/ui/button'
 import { CartCount } from '@/components/cart/cart-count'
 import { cn } from '@/lib/utils'
@@ -22,6 +24,26 @@ export function StoreHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
+  
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+  
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const adminEmails = ['admin@perfumeoasis.co.za']
+        const userIsAdmin = adminEmails.includes(user.email || '') || 
+                          user.user_metadata?.is_admin === true ||
+                          user.user_metadata?.role === 'admin'
+        setIsAdmin(userIsAdmin)
+      }
+    }
+    checkAdminStatus()
+  }, [])
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -152,6 +174,18 @@ export function StoreHeader() {
               >
                 <User className="h-5 w-5" />
               </Button>
+              
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => router.push('/admin')}
+                  className="text-royal-gold"
+                  title="Admin Dashboard"
+                >
+                  <Shield className="h-5 w-5" />
+                </Button>
+              )}
               
               <Button
                 variant="ghost"

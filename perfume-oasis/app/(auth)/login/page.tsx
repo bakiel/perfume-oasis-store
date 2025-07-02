@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Mail, Lock } from "lucide-react"
+import { Mail, Lock, Shield } from "lucide-react"
 import toast from "react-hot-toast"
 
 export default function LoginPage() {
@@ -27,16 +27,27 @@ export default function LoginPage() {
     setLoading(true)
     
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
       
       if (error) {
         toast.error(error.message)
-      } else {
-        toast.success("Welcome back!")
-        router.push("/account")
+      } else if (data.user) {
+        // Check if user is admin
+        const adminEmails = ['admin@perfumeoasis.co.za']
+        const isAdmin = adminEmails.includes(data.user.email || '') || 
+                       data.user.user_metadata?.is_admin === true ||
+                       data.user.user_metadata?.role === 'admin'
+        
+        if (isAdmin) {
+          toast.success("Welcome to Admin Dashboard!")
+          router.push("/admin")
+        } else {
+          toast.success("Welcome back!")
+          router.push("/account")
+        }
         router.refresh()
       }
     } catch (error) {
@@ -44,6 +55,12 @@ export default function LoginPage() {
     } finally {
       setLoading(false)
     }
+  }
+  
+  // Quick admin login for development
+  const quickAdminLogin = () => {
+    setEmail("admin@perfumeoasis.co.za")
+    setPassword("PerfumeOasis2025!")
   }
   
   return (
@@ -88,13 +105,22 @@ export default function LoginPage() {
               />
             </div>
           </div>
-          <div className="text-sm">
+          <div className="flex items-center justify-between">
             <Link 
               href="/forgot-password" 
-              className="text-emerald-palm hover:underline"
+              className="text-sm text-emerald-palm hover:underline"
             >
               Forgot your password?
             </Link>
+            <button
+              type="button"
+              onClick={quickAdminLogin}
+              className="text-sm text-gray-500 hover:text-emerald-palm flex items-center gap-1"
+              title="Quick admin login for development"
+            >
+              <Shield className="h-3 w-3" />
+              Admin
+            </button>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4 p-6 md:p-8">

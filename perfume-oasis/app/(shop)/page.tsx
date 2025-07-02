@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { createClient } from '@/lib/supabase/server'
 import { CategoryCard } from "@/components/ui/CategoryCard"
 import { ProductCard } from "@/components/ui/ProductCard"
+import { AdminQuickAccess } from "@/components/ui/AdminQuickAccess"
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -62,6 +63,8 @@ export default async function HomePage() {
   
   return (
     <>
+      <AdminQuickAccess />
+      
       {/* Hero Section */}
       <section className="relative h-[600px] md:h-[700px] w-full overflow-hidden">
         <Image 
