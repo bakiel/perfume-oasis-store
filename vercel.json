@@ -29,6 +29,10 @@
     "NEXT_PUBLIC_SITE_URL": {
       "description": "Public site URL",
       "value": "https://perfumeoasis.co.za"
+    },
+    "SENDGRID_API_KEY": {
+      "description": "SendGrid API key for email sending",
+      "value": "@sendgrid-api-key"
     }
   },
   "headers": [
