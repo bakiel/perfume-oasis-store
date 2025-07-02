@@ -34,7 +34,7 @@ export async function sendEmail(options: EmailOptions) {
   } = options
 
   // Log email to database
-  const supabase = createServiceClient()
+  const supabase = await createServiceClient()
   
   try {
     // Create email log entry

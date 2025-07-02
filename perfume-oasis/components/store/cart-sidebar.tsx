@@ -9,11 +9,14 @@ import { useCartStore } from '@/hooks/use-cart'
 import { formatCurrency } from '@/lib/utils'
 import { Dialog, Transition } from '@headlessui/react'
 
-export function CartSidebar() {
+interface CartSidebarProps {
+  isOpen: boolean
+  onClose: () => void
+}
+
+export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const { 
     items, 
-    isOpen, 
-    toggleCart, 
     removeItem, 
     updateQuantity, 
     getTotal 
@@ -25,7 +28,7 @@ export function CartSidebar() {
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={toggleCart}>
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-300"
@@ -60,7 +63,7 @@ export function CartSidebar() {
                       <button
                         type="button"
                         className="p-2 -m-2 hover:bg-gray-100 rounded-full"
-                        onClick={toggleCart}
+                        onClick={onClose}
                       >
                         <X className="h-5 w-5" />
                       </button>
@@ -87,7 +90,7 @@ export function CartSidebar() {
                         <div className="flex flex-col items-center justify-center h-full p-8">
                           <ShoppingBag className="h-16 w-16 text-gray-300 mb-4" />
                           <p className="text-gray-500 mb-4">Your cart is empty</p>
-                          <Link href="/products" onClick={toggleCart}>
+                          <Link href="/products" onClick={onClose}>
                             <Button><span>Continue Shopping</span></Button>
                           </Link>
                         </div>
@@ -166,7 +169,7 @@ export function CartSidebar() {
                         </p>
                         
                         <div className="space-y-2">
-                          <Link href="/checkout" onClick={toggleCart} className="w-full">
+                          <Link href="/checkout" onClick={onClose} className="w-full">
                             <Button 
                               className="w-full" 
                               size="lg"
@@ -179,7 +182,7 @@ export function CartSidebar() {
                             variant="outline" 
                             className="w-full" 
                             size="lg"
-                            onClick={toggleCart}
+                            onClick={onClose}
                           >
                             Continue Shopping
                           </Button>

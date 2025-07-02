@@ -7,9 +7,20 @@ import { CheckCircle, XCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
+type StatusType = 'checking' | 'ok' | 'error' | 'no-user' | 'not-configured'
+
+interface StatusState {
+  server: StatusType
+  database: StatusType
+  auth: StatusType
+  email: StatusType
+  tables: any
+  user: any
+}
+
 export default function StatusPage() {
   const router = useRouter()
-  const [status, setStatus] = useState<any>({
+  const [status, setStatus] = useState<StatusState>({
     server: 'checking',
     database: 'checking',
     auth: 'checking',
@@ -56,7 +67,7 @@ export default function StatusPage() {
       const { count: productCount } = await supabase
         .from('products')
         .select('*', { count: 'exact', head: true })
-      tables.products = productCount > 0
+      tables.products = (productCount || 0) > 0
 
       // Check if tables exist by trying to query them
       try {
@@ -82,8 +93,7 @@ export default function StatusPage() {
       setStatus(prev => ({ 
         ...prev, 
         database: 'ok',
-        tables,
-        productCount 
+        tables
       }))
     } catch (error) {
       console.error('Database check error:', error)
@@ -95,7 +105,7 @@ export default function StatusPage() {
     setStatus(prev => ({ ...prev, email: emailConfigured ? 'ok' : 'not-configured' }))
   }
 
-  const StatusIcon = ({ status }) => {
+  const StatusIcon = ({ status }: { status: StatusType }) => {
     if (status === 'checking') return <Loader2 className="w-5 h-5 animate-spin" />
     if (status === 'ok') return <CheckCircle className="w-5 h-5 text-green-500" />
     if (status === 'error') return <XCircle className="w-5 h-5 text-red-500" />
@@ -143,11 +153,6 @@ export default function StatusPage() {
                     <span className="capitalize">{table.replace('_', ' ')}</span>
                   </div>
                 ))}
-                {status.productCount !== undefined && (
-                  <p className="mt-2 text-sm text-gray-600">
-                    Products in database: {status.productCount}
-                  </p>
-                )}
               </div>
             )}
           </CardContent>

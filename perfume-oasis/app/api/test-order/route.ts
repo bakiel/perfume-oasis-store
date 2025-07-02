@@ -33,10 +33,10 @@ export async function GET(request: NextRequest) {
       result.withIdempotencyKey = { success: false, error: error1.message }
       
       // Try without idempotency_key
-      delete testOrderData.idempotency_key
+      const { idempotency_key, ...testOrderDataWithoutKey } = testOrderData
       const { data: order2, error: error2 } = await supabase
         .from('orders')
-        .insert(testOrderData)
+        .insert(testOrderDataWithoutKey)
         .select()
         .single()
       

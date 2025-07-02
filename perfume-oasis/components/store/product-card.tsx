@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { ShoppingCart, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/utils'
-import { useCartStore } from '@/lib/store/cart'
+import { useCartStore } from '@/hooks/use-cart'
 import toast from 'react-hot-toast'
 
 interface ProductCardProps {
@@ -38,9 +38,10 @@ export function ProductCard({ product }: ProductCardProps) {
     addItem({
       id: product.id,
       name: product.name,
+      brand: typeof product.brand === 'string' ? product.brand : product.brand?.name || '',
       price: product.price,
       image: product.main_image_url || '',
-      quantity: 1
+      size: product.sizes_available?.[0] || ''
     })
     
     toast.success('Added to cart')

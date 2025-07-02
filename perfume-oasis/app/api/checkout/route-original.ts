@@ -181,7 +181,16 @@ export async function POST(request: NextRequest) {
           orderNumber,
           invoiceNumber,
           items,
+          subtotal,
+          delivery,
           total,
+          deliveryAddress: {
+            street: customer.street,
+            suburb: customer.suburb,
+            city: customer.city,
+            province: customer.province,
+            postalCode: customer.postalCode
+          },
           invoiceBuffer: pdfBuffer,
         })
 
@@ -192,7 +201,16 @@ export async function POST(request: NextRequest) {
           orderNumber,
           invoiceNumber,
           items,
+          subtotal,
+          delivery,
           total,
+          deliveryAddress: {
+            street: customer.street,
+            suburb: customer.suburb,
+            city: customer.city,
+            province: customer.province,
+            postalCode: customer.postalCode
+          },
           invoiceBuffer: pdfBuffer,
         })
       }

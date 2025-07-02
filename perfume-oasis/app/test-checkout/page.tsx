@@ -60,11 +60,11 @@ export default function TestCheckoutPage() {
       } else {
         console.error('Checkout failed:', data)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Checkout error:', error)
       setResult({
         status: 'error',
-        data: { error: error.message }
+        data: { error: error.message || 'Unknown error' }
       })
     } finally {
       setIsLoading(false)
