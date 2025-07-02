@@ -22,6 +22,16 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: [
+      { url: '/perfume-oasis-icon-favicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/images/logos/Perfume Oasis Icon.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/images/logos/Perfume Oasis Icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  manifest: '/manifest.json',
   openGraph: {
     title: "Perfume Oasis - Luxury Fragrances",
     description: "Refresh your senses with authentic luxury fragrances",
@@ -30,6 +40,12 @@ export const metadata: Metadata = {
     locale: "en_ZA",
     type: "website",
     images: [
+      {
+        url: "/images/social/perfume-oasis-whatsapp-share.jpg",
+        width: 1024,
+        height: 1024,
+        alt: "Perfume Oasis - Luxury Fragrances",
+      },
       {
         url: "/images/social/perfume-oasis-bottle-share.jpg",
         width: 1200,

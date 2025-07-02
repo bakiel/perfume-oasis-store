@@ -164,7 +164,7 @@ export default function CartPage() {
               </div>
               {deliveryFee > 0 && (
                 <p className="text-xs md:text-sm text-gray-500 bg-amber-50 px-3 py-2 rounded">
-                  Free delivery on orders over R500
+                  Free delivery on orders over R1,000
                 </p>
               )}
               <div className="flex justify-between font-bold text-lg md:text-xl pt-3 border-t">
