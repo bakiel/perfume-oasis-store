@@ -44,6 +44,12 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
+        url: "/images/social/kontext-bottle-share.jpg",
+        width: 1200,
+        height: 1200,
+        alt: "Perfume Oasis - Kontext Luxury Fragrance",
+      },
+      {
         url: "/images/social/perfume-oasis-whatsapp-share.jpg",
         width: 1024,
         height: 1024,
@@ -67,7 +73,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Perfume Oasis - Luxury Fragrances",
     description: "Refresh your senses with authentic luxury fragrances",
-    images: ["/images/social/perfume-oasis-bottle-share.jpg"],
+    images: ["/images/social/kontext-bottle-share.jpg"],
   },
 };
 
