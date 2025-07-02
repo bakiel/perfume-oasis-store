@@ -204,7 +204,8 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/20 mt-8 pt-6 text-center text-sm opacity-80">
-          <p>&copy; 2025 Torrencial (Pty) Ltd. All rights reserved. | Company Registration: 2025/213013/07</p>
+          <p>&copy; 2025 TORRENCIAL (PTY) LTD trading as Perfume Oasis. All rights reserved.</p>
+          <p className="text-xs mt-1">Company Registration: 2025/213013/07</p>
           <div className="flex justify-center gap-4 mt-2">
             <Link href="/privacy" className="hover:opacity-100 transition-opacity">
               Privacy Policy
