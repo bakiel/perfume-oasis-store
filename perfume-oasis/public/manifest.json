@@ -22,21 +22,9 @@
     },
     {
       "src": "/images/logos/Perfume Oasis Icon.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/images/logos/Perfume Oasis Icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "/images/logos/Perfume Oasis Icon.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ]
 }

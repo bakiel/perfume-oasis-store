@@ -60,7 +60,7 @@ export async function sendOrderConfirmationEmail({ orderId, customerEmail, custo
       subtotal: order.subtotal || order.total,
       delivery: order.delivery_fee || 0,
       total: order.total || order.total_amount,
-      deliveryAddress: `${deliveryAddress.street}, ${deliveryAddress.suburb}, ${deliveryAddress.city}, ${deliveryAddress.province} ${deliveryAddress.postalCode}`,
+      deliveryAddress: deliveryAddress,
       trackingUrl: `https://perfumeoasis.co.za/track-order?order=${order.order_number}`
     }
     

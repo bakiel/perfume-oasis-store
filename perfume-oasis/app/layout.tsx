@@ -69,18 +69,6 @@ export const metadata: Metadata = {
     description: "Refresh your senses with authentic luxury fragrances",
     images: ["/images/social/perfume-oasis-bottle-share.jpg"],
   },
-  manifest: "/manifest.json",
-  icons: {
-    icon: [
-      { url: "/images/logos/Perfume Oasis Icon.png" },
-      { url: "/images/logos/Perfume Oasis Icon.png", sizes: "192x192", type: "image/png" },
-      { url: "/images/logos/Perfume Oasis Icon.png", sizes: "512x512", type: "image/png" },
-    ],
-    apple: [
-      { url: "/images/logos/Perfume Oasis Icon.png" },
-    ],
-    shortcut: [{ url: "/images/logos/Perfume Oasis Icon.png" }],
-  },
 };
 
 export const viewport: Viewport = {
