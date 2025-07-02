@@ -38,19 +38,21 @@ export default function AdminLayout({
   const pathname = usePathname()
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Mobile sidebar backdrop */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+    <div className="min-h-screen bg-gray-50">
+      {/* Admin wrapper with proper flex layout */}
+      <div className="flex h-screen overflow-hidden">
+        {/* Mobile sidebar backdrop */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
-      {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-white shadow-lg transform ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0`}>
+        {/* Sidebar */}
+        <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } transition-transform duration-200 ease-in-out lg:static lg:transform-none lg:block`}>
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center justify-between px-4 border-b">
@@ -118,29 +120,30 @@ export default function AdminLayout({
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Mobile header */}
-        <div className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-4 border-b bg-white px-4 shadow-sm lg:hidden">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="text-gray-700"
-          >
-            <Menu className="h-6 w-6" />
-          </button>
-          <div className="flex flex-1 justify-center">
-            <span className="font-display text-xl text-emerald-palm">
-              Perfume Oasis Admin
-            </span>
+        {/* Main content area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Mobile header */}
+          <div className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-4 border-b bg-white px-4 shadow-sm lg:hidden">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="text-gray-700"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+            <div className="flex flex-1 justify-center">
+              <span className="font-display text-xl text-emerald-palm">
+                Perfume Oasis Admin
+              </span>
+            </div>
+            {/* Spacer for centering */}
+            <div className="w-6" />
           </div>
-          {/* Spacer for centering */}
-          <div className="w-6" />
-        </div>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
+          {/* Page content with proper scroll container */}
+          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   )

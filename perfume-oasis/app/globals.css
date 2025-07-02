@@ -26,6 +26,15 @@
     padding-top: var(--safe-area-inset-top);
   }
 
+  /* Reset body padding for admin layout */
+  .admin-layout-wrapper {
+    margin-top: calc(-1 * var(--safe-area-inset-top));
+  }
+  
+  .admin-layout-wrapper body {
+    padding-top: 0;
+  }
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 6px;

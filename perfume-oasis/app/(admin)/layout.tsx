@@ -26,7 +26,10 @@ export default async function AdminRootLayout({
     redirect('/unauthorized')
   }
 
-  // Return children directly without any wrapper
-  // This ensures admin routes don't inherit any shop layouts
-  return <>{children}</>
+  // Return children with admin-specific wrapper to ensure complete isolation
+  return (
+    <div className="admin-layout-wrapper">
+      {children}
+    </div>
+  )
 }
