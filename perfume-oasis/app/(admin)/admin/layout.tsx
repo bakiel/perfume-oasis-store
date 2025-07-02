@@ -17,6 +17,7 @@ import {
   PackageCheck
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { LogoutButton } from "@/components/admin/logout-button"
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: BarChart3 },
@@ -108,14 +109,7 @@ export default function AdminLayout({
                 <p className="text-xs text-gray-500 truncate">admin@perfumeoasis.co.za</p>
               </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full justify-start"
-            >
-              <LogOut className="h-4 w-4 mr-2 shrink-0" />
-              Sign Out
-            </Button>
+            <LogoutButton />
           </div>
         </div>
       </div>

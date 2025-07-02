@@ -62,8 +62,17 @@ export default function CartPage() {
     if (items.length === 0) return
     
     try {
+      // Map cart items to ensure product_id is set
+      const mappedItems = items.map(item => ({
+        id: item.id,
+        product_id: item.product_id || item.id, // Use id as fallback
+        quantity: item.quantity,
+        price: item.price,
+        product: item.category_id ? { category_id: item.category_id } : undefined
+      }))
+      
       const result = await promotionService.applyPromotionsToCart(
-        items,
+        mappedItems,
         subtotal,
         undefined
       )
@@ -80,8 +89,17 @@ export default function CartPage() {
     if (items.length === 0) return
     
     try {
+      // Map cart items to ensure product_id is set
+      const mappedItems = items.map(item => ({
+        id: item.id,
+        product_id: item.product_id || item.id, // Use id as fallback
+        quantity: item.quantity,
+        price: item.price,
+        product: item.category_id ? { category_id: item.category_id } : undefined
+      }))
+      
       const result = await promotionService.applyPromotionsToCart(
-        items,
+        mappedItems,
         subtotal,
         code || undefined
       )
@@ -97,8 +115,17 @@ export default function CartPage() {
     
     setIsApplyingPromo(true)
     try {
+      // Map cart items to ensure product_id is set
+      const mappedItems = items.map(item => ({
+        id: item.id,
+        product_id: item.product_id || item.id, // Use id as fallback
+        quantity: item.quantity,
+        price: item.price,
+        product: item.category_id ? { category_id: item.category_id } : undefined
+      }))
+      
       const result = await promotionService.applyPromotionsToCart(
-        items,
+        mappedItems,
         subtotal,
         promoInput
       )
