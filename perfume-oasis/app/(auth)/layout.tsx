@@ -42,12 +42,12 @@ export default function AuthLayout({
           
           <div className="mt-12 grid grid-cols-2 gap-8">
             <div>
-              <div className="text-3xl xl:text-4xl font-bold mb-2">30+</div>
-              <div className="text-sm xl:text-base opacity-80">Curated Fragrances</div>
+              <div className="text-3xl xl:text-4xl font-bold mb-2">24/7</div>
+              <div className="text-sm xl:text-base opacity-80">Customer Support</div>
             </div>
             <div>
               <div className="text-3xl xl:text-4xl font-bold mb-2">100%</div>
-              <div className="text-sm xl:text-base opacity-80">Authentic Products</div>
+              <div className="text-sm xl:text-base opacity-80">Authentic Luxury</div>
             </div>
           </div>
           
