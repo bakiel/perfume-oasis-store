@@ -23,12 +23,15 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   icons: {
-    icon: [
-      { url: '/perfume-oasis-icon-favicon.png', sizes: '32x32', type: 'image/png' },
-      { url: '/images/logos/Perfume Oasis Icon.png', sizes: '192x192', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/images/logos/Perfume Oasis Icon.png', sizes: '180x180', type: 'image/png' },
+    icon: '/icon.png',
+    apple: '/apple-icon.png',
+    other: [
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '32x32',
+        url: '/perfume-oasis-icon-favicon.png',
+      },
     ],
   },
   manifest: '/manifest.json',
