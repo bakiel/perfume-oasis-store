@@ -40,11 +40,11 @@ export async function GET(request: Request) {
         status,
         payment_status,
         created_at,
-        order_items (
+        order_items!inner (
           quantity,
           price,
           product_id,
-          products!inner (
+          products (
             name,
             sku
           )
@@ -87,7 +87,7 @@ export async function GET(request: Request) {
       const productStats: Record<string, { name: string, quantity: number, revenue: number }> = {}
       
       orders?.forEach(order => {
-        order.order_items?.forEach(item => {
+        order.order_items?.forEach((item: any) => {
           const productName = item.products?.name || 'Unknown Product'
           if (!productStats[productName]) {
             productStats[productName] = { name: productName, quantity: 0, revenue: 0 }
