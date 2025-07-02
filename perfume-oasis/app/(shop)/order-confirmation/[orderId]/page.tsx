@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { CheckCircle, FileText, Mail, Package, CreditCard, Download, ArrowLeft } from "lucide-react"
+import { CheckCircle, FileText, Mail, Package, CreditCard, Download, ArrowLeft, ExternalLink } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from "next/navigation"
@@ -154,24 +154,37 @@ export default async function OrderConfirmationPage({
         </div>
 
         {/* Payment Instructions */}
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6">
-          <h3 className="font-semibold text-amber-900 mb-2">
-            Payment Instructions
-          </h3>
-          <p className="text-amber-800 text-sm mb-3">
-            Please complete your payment using the following bank details:
-          </p>
-          <div className="bg-white rounded p-4 space-y-2 text-sm">
-            <div><span className="font-medium">Bank:</span> Standard Bank</div>
-            <div><span className="font-medium">Account Name:</span> Perfume Oasis (Pty) Ltd</div>
-            <div><span className="font-medium">Account Number:</span> 123456789</div>
-            <div><span className="font-medium">Branch Code:</span> 051001</div>
-            <div><span className="font-medium">Reference:</span> <span className="font-mono bg-amber-100 px-2 py-1 rounded">{order.order_number}</span></div>
+        {order.payment_status === 'pending' && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6">
+            <h3 className="font-semibold text-amber-900 mb-2">
+              Payment Instructions
+            </h3>
+            <p className="text-amber-800 text-sm mb-3">
+              Please complete your payment using the following bank details:
+            </p>
+            <div className="bg-white rounded p-4 space-y-2 text-sm">
+              <div><span className="font-medium">Bank:</span> Nedbank</div>
+              <div><span className="font-medium">Account Name:</span> Torrencial</div>
+              <div><span className="font-medium">Account Number:</span> 1313614866</div>
+              <div><span className="font-medium">Branch Code:</span> 198765</div>
+              <div><span className="font-medium">Reference:</span> <span className="font-mono bg-amber-100 px-2 py-1 rounded">{order.order_number}</span></div>
+            </div>
+            <p className="text-amber-800 text-xs mt-3">
+              Important: Use your order number as the payment reference
+            </p>
+            
+            {/* Link to Payment Guide */}
+            <div className="mt-4">
+              <Link href="/payment-guide">
+                <Button variant="outline" className="w-full bg-white hover:bg-amber-100 border-amber-300">
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  View Complete Payment Guide
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
           </div>
-          <p className="text-amber-800 text-xs mt-3">
-            Important: Use your order number as the payment reference
-          </p>
-        </div>
+        )}
 
         {/* Actions */}
         <OrderActionsEnhanced order={order} />

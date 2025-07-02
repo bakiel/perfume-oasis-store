@@ -159,6 +159,11 @@ export function Footer() {
                   Returns Policy
                 </Link>
               </li>
+              <li>
+                <Link href="/payment-guide" className="hover:opacity-80 transition-opacity">
+                  Payment Guide
+                </Link>
+              </li>
             </ul>
           </div>
 
