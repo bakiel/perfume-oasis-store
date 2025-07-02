@@ -131,13 +131,13 @@ export default function AdminOrdersPage() {
   const summary = getStatusSummary()
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-display text-emerald-palm mb-2">
+        <h1 className="text-2xl md:text-3xl font-display text-emerald-palm">
           Orders
         </h1>
-        <p className="text-gray-600">Manage customer orders and fulfilment</p>
+        <p className="text-gray-600 mt-1">Manage customer orders and fulfilment</p>
       </div>
 
       {/* Summary Cards */}

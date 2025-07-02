@@ -229,7 +229,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
   const currentPaymentStatus = paymentStatusOptions.find(s => s.value === order.payment_status) || paymentStatusOptions[0]
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
         <div className="flex items-center gap-4">
