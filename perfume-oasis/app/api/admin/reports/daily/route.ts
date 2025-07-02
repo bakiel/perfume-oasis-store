@@ -44,7 +44,7 @@ export async function GET(request: Request) {
           quantity,
           price,
           product_id,
-          products (
+          products!inner (
             name,
             sku
           )
@@ -105,10 +105,10 @@ export async function GET(request: Request) {
     // Get inventory alerts (low stock)
     const { data: lowStockProducts } = await supabase
       .from('products')
-      .select('id, name, sku, inventory_count')
+      .select('id, name, sku, stock_quantity')
       .eq('is_active', true)
-      .lt('inventory_count', 10)
-      .order('inventory_count', { ascending: true })
+      .lt('stock_quantity', 10)
+      .order('stock_quantity', { ascending: true })
     
     // Generate report
     const report = {
