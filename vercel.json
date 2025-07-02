@@ -1,4 +1,5 @@
 {
+  "rootDirectory": "perfume-oasis",
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
@@ -27,7 +28,7 @@
     },
     "NEXT_PUBLIC_SITE_URL": {
       "description": "Public site URL",
-      "value": "https://perfume-oasis.vercel.app"
+      "value": "https://perfumeoasis.co.za"
     }
   },
   "headers": [
